@@ -42,17 +42,67 @@ scan with {:
 	return s;
 :}
 
-terminal 
+terminal	PROG;
+terminal	PRINT;
+terminal	RETURN;
+terminal	VOID;
+terminal	BREAK;
+terminal	CLASS;
+terminal	ENUM;
+terminal	ELSE;
+terminal	CONST;
+terminal	IF;
+terminal	DO;
+terminal	WHILE;
+terminal	NEW;
+terminal	READ;
+terminal	CONTINUE;
+terminal	GOTO;
+terminal	RECORD;
+
+terminal Character	CHAR_CONST;
+terminal Boolean	BOOL_CONST;
+
+terminal	PLUS;
+terminal	MINUS;
+terminal	MULTIPLY;
+terminal	DIVIDE;
+terminal	MODUO;
+terminal	EQUAL;
+terminal	GREATER;
+terminal	GREATER_EQUAL;
+terminal	LESS;
+terminal	LESS_EQUAL;
+terminal	AND;
+terminal	OR;
+terminal	ASSIGNMENT;
+terminal	INC;
+terminal	DEC;
+terminal	SEMI;
+terminal	COLON;
+terminal	COMMA;
+terminal	POINT;
+terminal	LEFT_ROUND_BRACKET;
+terminal	RIGHT_ROUND_BRACKET;
+terminal	LEFT_SQUARE_BRACKET;
+terminal	RIGHT_SQUARE_BRACKET;
+terminal	LEFT_CURLY_BRACKET;
+terminal	RIGHT_CURLY_BRACKET;
+
 terminal Integer NUMBER;
 terminal String IDENT;
-terminal IF, ELSE;
+
+
+/* NON terminals ? *\
 
 nonterminal Program, VarDeclList, MethodDeclList, VarDecl, Type, MethodDecl;
 nonterminal FormPars, StatementList, FormalParamList, FormalParamDecl, Statement;
 nonterminal Designator, Expr, Term, Addop, Factor, ActualPars, ActualParamList;
 nonterminal Matched, Unmatched;
 
-Program ::= (Program) PROG IDENT VarDeclList LBRACE MethodDeclList RBRACE;
+Program ::= (Program) PROG IDENT VarDeclList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
+
+ProgName ::= (ProgName) IDENT:progName;
 
 VarDeclList ::= (VarDeclarations) VarDeclList VarDecl
 			|
