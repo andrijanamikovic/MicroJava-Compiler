@@ -27,4 +27,7 @@ replay_pid*
 
 .metadata/
 logs/
+src/rs/ac/bg/etf/pp1/ast/
 MicroJava-Compiler/bin/MicroJava-Compiler/
+MicroJava-Compiler/bin/mjparser_astbuild.cup
+MicroJava-Compiler/spec/mjparser_astbuild.cup
