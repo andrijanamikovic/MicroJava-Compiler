@@ -48,7 +48,7 @@ import java_cup.runtime.Symbol;
 "return" 	{ return new_symbol(sym.RETURN, yytext()); }
 "void" 		{ return new_symbol(sym.VOID, yytext()); }
 "break"  	{ return new_symbol(sym.BREAK, yytext()); }
-"class"  	{ return new_symbol(sym.CLASS, yytext()); }
+"class"  	{ }
 "enum"  	{ return new_symbol(sym.ENUM, yytext()); }
 "else"  	{ return new_symbol(sym.ELSE, yytext()); }
 "const"		{ return new_symbol(sym.CONST, yytext()); }
