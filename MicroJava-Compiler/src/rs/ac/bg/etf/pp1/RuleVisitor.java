@@ -16,6 +16,5 @@ public class RuleVisitor extends VisitorAdaptor{
 	
     public void visit(PrintStmt print) {
 		printCallCount++;
-	}
-
+	}   
 }

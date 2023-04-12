@@ -90,6 +90,8 @@ nonterminal Relop, Addop, Mulop;
 nonterminal ProgName;
 nonterminal AllDeclarationsList;
 nonterminal ConstDecl, ConstDeclType, ConstDeclList;
+nonterminal MethodType, MethodReturnType, MethodVarDecl;
+nonterminal VarDeclLine, VarDeclBrackets;
 
 
 Program ::= (Program) PROG ProgName:p AllDeclarationsList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
@@ -103,7 +105,7 @@ AllDeclarationsList ::= (VarDeclarations) AllDeclarationsList VarDecl
 						(NoDeclarations) /* epsilon */
 						;
 
-VarDeclList ::= (VarDeclarationsList) VarDeclList VarDecl;
+VarDecl ::= (VarDeclarations) VarDecl VarDeclLine;
 
 ConstDecl ::= (ConstDecl) CONST ConstDeclType ConstDeclList SEMI;
 
@@ -116,7 +118,20 @@ ConstDeclList ::= (IntegerConstValue) IDENT:constName ASSIGNMENT NUMBER:numberCo
  				(BoolConstValue) IDENT:constName ASSIGNMENT BOOL_CONST:boolConstValue
  				;
 
-VarDecl ::= (VarDecl) Type:varType IDENT:varName SEMI;
+VarDeclLine ::= (VarDeclLine) Type:varType VarDeclList SEMI;
+
+VarDeclList ::= (VarDeclList) VarDeclList COMMA VarDeclBrackets
+			|
+			(SingleVarDecl) VarDeclBrackets
+			|
+			(ErrorVarDecl) error:l
+		    {: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
+		    ;
+		   
+VarDeclBrackets ::= (VarDeclBrackets) IDENT:varName LEFT_SQUARE_BRACKET RIGHT_SQUARE_BRACKET
+					|
+					(VarDeclName) IDENT:varName
+					;
 
 Type ::= (Type) IDENT:typeName;
 
@@ -125,9 +140,20 @@ MethodDeclList ::= (MethodDeclarations) MethodDeclList MethodDecl
 				(NoMethodDecl) /* epsilon */
 				;
 				
-MethodDecl ::= (MethodDecl) Type:retType IDENT:methName LEFT_ROUND_BRACKET FormPars RIGHT_ROUND_BRACKET VarDeclList LEFT_CURLY_BRACKET StatementList RIGHT_CURLY_BRACKET;
+MethodDecl ::= (MethodDecl) MethodType LEFT_ROUND_BRACKET FormPars MethodVarDecl LEFT_CURLY_BRACKET StatementList RIGHT_CURLY_BRACKET;
 
+MethodType ::= (MethodType) MethodReturnType IDENT:methName;
 
+MethodReturnType ::= (ConcreteType) Type:retType
+					 |
+					 (VoidType) VOID
+					 ;
+
+MethodVarDecl ::= (MethodHasVariables) MethodVarDecl VarDecl
+				  |
+				  (MethodHasNotVariables) /* epsilon */
+				  ;
+  
 FormPars ::= (FormParams) FormalParamList
 		  |
 		  (NoFormParam) /* epsilon */
