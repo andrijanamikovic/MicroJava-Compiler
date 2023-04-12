@@ -88,16 +88,33 @@ nonterminal Designator, Expr, Term, Factor, ActualPars, ActualParamList;
 nonterminal Matched, Unmatched;
 nonterminal Relop, Addop, Mulop;
 nonterminal ProgName;
+nonterminal AllDeclarationsList;
+nonterminal ConstDecl, ConstDeclType, ConstDeclList;
 
 
-Program ::= (Program) PROG IDENT VarDeclList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
+Program ::= (Program) PROG ProgName:p AllDeclarationsList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
 
 ProgName ::= (ProgName) IDENT:progName;
 
-VarDeclList ::= (VarDeclarations) VarDeclList VarDecl
-			|
-			(NoVarDecl) /* epsilon */
-			;
+AllDeclarationsList ::= (VarDeclarations) AllDeclarationsList VarDecl
+						|
+						(ConstDeclarations) AllDeclarationsList ConstDecl
+						|
+						(NoDeclarations) /* epsilon */
+						;
+
+VarDeclList ::= (VarDeclarationsList) VarDeclList VarDecl;
+
+ConstDecl ::= (ConstDecl) CONST ConstDeclType ConstDeclList SEMI;
+
+ConstDeclType ::= (ConstDeclType) Type:constType;
+
+ConstDeclList ::= (IntegerConstValue) IDENT:constName ASSIGNMENT NUMBER:numberConstValue
+ 				|
+ 				(CharConstValue) IDENT:constName ASSIGNMENT CHAR_CONST:charConstValue
+ 				|
+ 				(BoolConstValue) IDENT:constName ASSIGNMENT BOOL_CONST:boolConstValue
+ 				;
 
 VarDecl ::= (VarDecl) Type:varType IDENT:varName SEMI;
 
