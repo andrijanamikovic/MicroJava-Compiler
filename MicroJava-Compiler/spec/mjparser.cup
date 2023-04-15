@@ -178,10 +178,12 @@ FormPars ::= (FormParams) FormalParamList
 		  (NoFormParam) /* epsilon */
 		  ;
 		  
-FormalParamList ::= (FormalParamDecls) FormalParamList COMMA FormalParamDecl
+FormalParamList ::= (FormalParamDecls) FormalParamDecl COMMA FormalParamList
 				|
 				(SingleFormalParamDecl) FormalParamDecl
 				;
+				
+FormalParamDecl ::= (FormalParamDeclaration) Type:paramType IDENT:parmName VarDeclBrackets;
 
 StatementList ::= (Statements) StatementList Statement
 				|

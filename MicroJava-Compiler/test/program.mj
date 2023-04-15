@@ -3,7 +3,7 @@ program MJProgram
  int a, b, c;
  const int x = 4;
 {
-	int main(){
+	int main(int x){
 		print (1);
 		
 		int p;
