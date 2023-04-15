@@ -82,55 +82,59 @@ terminal DEC;
 terminal DIVIDE;
 
 
-nonterminal Program, VarDeclList, MethodDeclList, VarDecl, Type, MethodDecl;
+nonterminal Program, ProgName, AllDeclarationsList, MethodDeclList, Type, MethodDecl;
 nonterminal FormPars, StatementList, FormalParamList, FormalParamDecl, Statement;
 nonterminal Designator, Expr, Term, Factor, ActualPars, ActualParamList;
 nonterminal Matched, Unmatched;
 nonterminal Relop, Addop, Mulop;
-nonterminal ProgName;
-nonterminal AllDeclarationsList;
 nonterminal ConstDecl, ConstDeclType, ConstDeclList;
 nonterminal MethodType, MethodReturnType, MethodVarDecl;
-nonterminal VarDeclLine, VarDeclBrackets;
+nonterminal VarDeclList, VarDecl, VarDeclLine, VarDeclBrackets;
+nonterminal ProgDeclList, ConstDeclLine, MoreVarDecl;
 
 
-Program ::= (Program) PROG ProgName:p AllDeclarationsList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
+Program ::= (Program) PROG  ProgName AllDeclarationsList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
 
 ProgName ::= (ProgName) IDENT:progName;
 
-AllDeclarationsList ::= (VarDeclarations) AllDeclarationsList VarDecl
+AllDeclarationsList  ::= (ConstDeclarations) AllDeclarationsList ConstDecl
+						| 
+						(VarDeclarations) AllDeclarationsList  VarDecl
 						|
-						(ConstDeclarations) AllDeclarationsList ConstDecl
-						|
-						(NoDeclarations) /* epsilon */
+						(NoDecl) /* epsilon */
 						;
 
-VarDecl ::= (VarDeclarations) VarDecl VarDeclLine;
+ConstDecl ::= (ConstDecl) CONST ConstDeclType ConstDeclLine SEMI;
 
-ConstDecl ::= (ConstDecl) CONST ConstDeclType ConstDeclList SEMI;
 
 ConstDeclType ::= (ConstDeclType) Type:constType;
+
+ConstDeclLine ::= (ConstDeclLine) ConstDeclLine COMMA ConstDeclList;
 
 ConstDeclList ::= (IntegerConstValue) IDENT:constName ASSIGNMENT NUMBER:numberConstValue
  				|
  				(CharConstValue) IDENT:constName ASSIGNMENT CHAR_CONST:charConstValue
  				|
  				(BoolConstValue) IDENT:constName ASSIGNMENT BOOL_CONST:boolConstValue
+ 				|
+ 				(NoConstValue) /* epsilon */
  				;
+
+VarDecl ::= (VarDecl) Type VarDeclList;
 
 VarDeclLine ::= (VarDeclLine) Type:varType VarDeclList SEMI;
 
-VarDeclList ::= (VarDeclList) VarDeclList COMMA VarDeclBrackets
+VarDeclList ::= (VarDeclList) MoreVarDecl VarDeclList 
 			|
-			(SingleVarDecl) VarDeclBrackets
-			|
-			(ErrorVarDecl) error:l
-		    {: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
+			(SingleVarDecl) VarDeclBrackets SEMI
 		    ;
+		    
+MoreVarDecl ::= (MoreVarDecl) VarDeclBrackets COMMA
+				|
+			   (ErrorStmt) error SEMI:l
+			   {: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :};
 		   
 VarDeclBrackets ::= (VarDeclBrackets) IDENT:varName LEFT_SQUARE_BRACKET RIGHT_SQUARE_BRACKET
-					|
-					(VarDeclName) IDENT:varName
 					;
 
 Type ::= (Type) IDENT:typeName;
@@ -144,9 +148,9 @@ MethodDecl ::= (MethodDecl) MethodType LEFT_ROUND_BRACKET FormPars MethodVarDecl
 
 MethodType ::= (MethodType) MethodReturnType IDENT:methName;
 
-MethodReturnType ::= (ConcreteType) Type:retType
-					 |
-					 (VoidType) VOID
+MethodReturnType ::= (VoidType) VOID
+					|
+					(ConcreteType) Type:retType
 					 ;
 
 MethodVarDecl ::= (MethodHasVariables) MethodVarDecl VarDecl

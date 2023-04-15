@@ -1,5 +1,8 @@
 program MJProgram
-	int x; int y;
+	int x;
+	int y;
+	const int size = 10;
+	
 {
 	int main() {
 		
