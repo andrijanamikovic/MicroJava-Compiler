@@ -88,7 +88,7 @@ nonterminal Designator, Expr, Term, Factor, ActualPars, ActualParamList;
 nonterminal Matched, Unmatched;
 nonterminal Relop, Addop, Mulop;
 nonterminal VarDeclList, VarDecl, VarDeclType, LastVarDecl, VarDeclBrackets;
-nonterminal ConstDecl, ConstDeclType, ConstDeclList;
+nonterminal ConstDecl, ConstDeclType, ConstDeclList, MoreConstDecl;
 nonterminal MethodType, MethodReturnType, MethodVarDecl;
 nonterminal ProgDeclList, ConstDeclLine, MoreVarDecl;
 
@@ -97,18 +97,27 @@ Program ::= (Program) PROG  ProgName AllDeclarationsList LEFT_CURLY_BRACKET Meth
 
 ProgName ::= (ProgName) IDENT:progName;
 
-AllDeclarationsList  ::=  
+AllDeclarationsList  ::= (ConstDeclarations) AllDeclarationsList ConstDecl
+						|
 						(VarDeclarations) AllDeclarationsList  VarDecl
 						|
 						(NoDecl) /* epsilon */
 						;
 
-ConstDecl ::= (ConstDecl) CONST ConstDeclType ConstDeclLine SEMI;
+ConstDecl ::= (ConstDecl) CONST Type:constType ConstDeclLine SEMI;
 
 
 ConstDeclType ::= (ConstDeclType) Type:constType;
 
-ConstDeclLine ::= (ConstDeclLine) ConstDeclLine COMMA ConstDeclList;
+ConstDeclLine ::= (ConstDeclarationLine) MoreConstDecl ConstDeclLine
+					|
+ 					(SingleConstValue) ConstDeclList  /* epsilon */
+ 					;
+
+MoreConstDecl ::= (MoreConst) ConstDeclList COMMA
+					|
+					(ErrorConstStmt) error COMMA:l
+			   		{: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :};
 
 ConstDeclList ::= (IntegerConstValue) IDENT:constName ASSIGNMENT NUMBER:numberConstValue
  				|
