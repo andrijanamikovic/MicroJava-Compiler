@@ -3,4 +3,11 @@ program MJProgram
  int a, b, c;
  const int x = 4;
 {
+	int main(){
+		print (1);
+		
+		int p;
+		
+		print(2);
+	}
 }

@@ -159,7 +159,7 @@ MethodDeclList ::= (MethodDeclarations) MethodDeclList MethodDecl
 				(NoMethodDecl) /* epsilon */
 				;
 				
-MethodDecl ::= (MethodDecl) MethodType LEFT_ROUND_BRACKET FormPars MethodVarDecl LEFT_CURLY_BRACKET StatementList RIGHT_CURLY_BRACKET;
+MethodDecl ::= (MethodDecl) MethodType LEFT_ROUND_BRACKET FormPars RIGHT_ROUND_BRACKET MethodVarDecl LEFT_CURLY_BRACKET StatementList RIGHT_CURLY_BRACKET;
 
 MethodType ::= (MethodType) MethodReturnType IDENT:methName;
 
