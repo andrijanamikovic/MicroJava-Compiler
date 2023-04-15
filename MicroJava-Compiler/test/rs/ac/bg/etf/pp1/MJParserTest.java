@@ -27,6 +27,9 @@ public class MJParserTest {
 		Logger log = Logger.getLogger(MJParserTest.class);
 		
 		Reader br = null;
+		
+		RuleVisitor v = new RuleVisitor();
+
 		try {
 			File sourceCode = new File("test/program.mj");
 			log.info("Compiling source file: " + sourceCode.getAbsolutePath());
@@ -43,16 +46,22 @@ public class MJParserTest {
 			log.info("===================================");
 
 			// ispis prepoznatih programskih konstrukcija
-			RuleVisitor v = new RuleVisitor();
 			prog.traverseBottomUp(v); 
 	      
 			log.info(" Print count calls = " + v.printCallCount);
 
 			log.info(" Deklarisanih promenljivih ima = " + v.varDeclCount);
 			
+			log.info(" Const deklarisanih = " + v.constDeclCount);
+			
 		} 
 		finally {
-			if (br != null) try { br.close(); } catch (IOException e1) { log.error(e1.getMessage(), e1); }
+			if (br != null) try { br.close(); } catch (IOException e1) { log.error(e1.getMessage(), e1); 
+			log.info(" Print count calls = " + v.printCallCount);
+
+			log.info(" Deklarisanih promenljivih ima = " + v.varDeclCount);
+			
+			log.info(" Const deklarisanih = " + v.constDeclCount);}
 		}
 
 	}

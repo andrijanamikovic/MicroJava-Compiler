@@ -7,6 +7,7 @@ public class RuleVisitor extends VisitorAdaptor{
 
 	int printCallCount = 0;
 	int varDeclCount = 0;
+	int constDeclCount = 0;
 	
 	Logger log = Logger.getLogger(getClass());
 
@@ -17,4 +18,8 @@ public class RuleVisitor extends VisitorAdaptor{
     public void visit(PrintStmt print) {
 		printCallCount++;
 	}   
+    
+    public void visit(ConstDecl constdecl) {
+    	constDeclCount++;
+    }
 }
