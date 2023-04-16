@@ -68,7 +68,7 @@ terminal ENUM;
 terminal BREAK;
 terminal READ;
 terminal INC;
-terminal GOTO;
+terminal FOREACH;
 terminal GREATER;
 terminal WHILE;
 terminal GREATER_EQUAL;
@@ -91,6 +91,7 @@ nonterminal VarDeclList, VarDecl, VarDeclType, LastVarDecl, VarDeclBrackets;
 nonterminal ConstDecl, ConstDeclType, ConstDeclList, MoreConstDecl;
 nonterminal MethodType, MethodReturnType, MethodVarDecl;
 nonterminal ProgDeclList, ConstDeclLine, MoreVarDecl;
+nonterminal Condition, DesignatorStatement, PrintArgs, ForEachLabel;
 
 
 Program ::= (Program) PROG  ProgName AllDeclarationsList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
@@ -190,10 +191,35 @@ StatementList ::= (Statements) StatementList Statement
 				(NoStmt) /* epsilon */
 				;
 				
-Statement ::= (MatchedStmt) Matched
-		   |
-		   (UnmatchedStmt) Unmatched
-		   ; 
+Statement ::= (DesigStatment) DesignatorStatement SEMI
+				|
+				(WhileStatment) WHILE LEFT_ROUND_BRACKET Condition RIGHT_ROUND_BRACKET Statement
+				|
+				(BreakStatment) BREAK SEMI
+				|
+				(ContinueStatment) CONTINUE SEMI
+				|
+				(ReturnStatment) RETURN Expr SEMI
+				|
+				(ReadStatment) READ LEFT_ROUND_BRACKET DesignatorStatement RIGHT_ROUND_BRACKET SEMI
+				|
+				(PrintStatment) PRINT LEFT_ROUND_BRACKET Expr PrintArgs RIGHT_ROUND_BRACKET SEMI
+				|
+				(ForEachStatment) Designator POINT FOREACH LEFT_ROUND_BRACKET ForEachLabel RIGHT_ROUND_BRACKET SEMI
+				|
+				(MoreStatments) LEFT_CURLY_BRACKET Statement RIGHT_CURLY_BRACKET
+				;
+
+Condition ::= (Conditions) SEMI
+			;
+					
+DesignatorStatement ::= (DesStatment) SEMI
+						;
+				
+PrintArgs ::= (ArgumentsForPrint) SEMI
+			;
+ForEachLabel ::= (LabelForEach) SEMI
+				;
 
 Unmatched ::= (UnmatchedIf) IF Expr Statement
 		 	|

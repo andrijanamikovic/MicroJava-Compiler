@@ -4,10 +4,9 @@ program MJProgram
  const int x = 4;
 {
 	int main(int x){
-		print (1);
+		break;
+		continue;
+		return 0;
 		
-		int p;
-		
-		print(2);
 	}
 }

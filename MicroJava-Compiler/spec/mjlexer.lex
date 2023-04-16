@@ -58,7 +58,7 @@ import java_cup.runtime.Symbol;
 "new" 		{ return new_symbol(sym.NEW, yytext()); }
 "read" 		{ return new_symbol(sym.READ, yytext()); }
 "continue" 	{ return new_symbol(sym.CONTINUE, yytext()); }
-"goto" 		{ return new_symbol(sym.GOTO, yytext()); }
+"foreach" 		{ return new_symbol(sym.FOREACH, yytext()); }
 "record" 	{ return new_symbol(sym.RECORD, yytext()); }
 
 
