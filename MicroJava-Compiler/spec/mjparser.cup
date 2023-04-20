@@ -51,8 +51,6 @@ terminal Character CHAR_CONST;
 terminal Boolean BOOL_CONST;
 terminal IF, ELSE;
 
-/* No rules*/
-
 terminal COLON;
 terminal ASSIGNMENT;
 terminal MULTIPLY;
@@ -81,18 +79,17 @@ terminal OR;
 terminal DEC;
 terminal DIVIDE;
 
-
 nonterminal Program, ProgName, AllDeclarationsList, MethodDeclList, Type, MethodDecl;
 nonterminal FormPars, StatementList, FormalParamList, FormalParamDecl, Statement;
 nonterminal Designator, Expr, Term, Factor, ActualPars, ActualParamList;
-nonterminal Matched, Unmatched;
 nonterminal Relop, Addop, Mulop;
 nonterminal VarDeclList, VarDecl, VarDeclType, LastVarDecl, VarDeclBrackets;
 nonterminal ConstDecl, ConstDeclType, ConstDeclList, MoreConstDecl;
 nonterminal MethodType, MethodReturnType, MethodVarDecl;
 nonterminal ProgDeclList, ConstDeclLine, MoreVarDecl;
-nonterminal Condition, DesignatorStatement, PrintArgs, ForEachLabel;
+nonterminal Condition, DesignatorStatement, ForEachLabel, PrintArgs;
 
+precedence left ELSE;
 
 Program ::= (Program) PROG  ProgName AllDeclarationsList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
 
@@ -190,7 +187,7 @@ StatementList ::= (Statements) StatementList Statement
 				|
 				(NoStmt) /* epsilon */
 				;
-				
+
 Statement ::= (DesigStatment) DesignatorStatement SEMI
 				|
 				(WhileStatment) WHILE LEFT_ROUND_BRACKET Condition RIGHT_ROUND_BRACKET Statement
@@ -208,39 +205,26 @@ Statement ::= (DesigStatment) DesignatorStatement SEMI
 				(ForEachStatment) Designator POINT FOREACH LEFT_ROUND_BRACKET ForEachLabel RIGHT_ROUND_BRACKET SEMI
 				|
 				(MoreStatments) LEFT_CURLY_BRACKET Statement RIGHT_CURLY_BRACKET
+				|
+				(IfStatment) IF Expr Statement IF
+				|
+				(ElseStatment) IF Expr Statement ELSE Statement
 				;
 
 Condition ::= (Conditions) SEMI
+			;
+			
+PrintArgs ::= (ArgumentsForPrint) COMMA NUMBER 
+			|
+			(NoArgumentsForPrint)
 			;
 					
 DesignatorStatement ::= (DesStatment) SEMI
 						;
 				
-PrintArgs ::= (ArgumentsForPrint) SEMI
-			;
 ForEachLabel ::= (LabelForEach) SEMI
 				;
 
-Unmatched ::= (UnmatchedIf) IF Expr Statement
-		 	|
-		 	(UnmatchedIfElse) IF Expr Matched ELSE Unmatched
-		 	;
-		 
-
-Matched ::= (Assignment) Designator:dest EQUAL Expr:e SEMI
-		   |
-		   (ErrorStmt) error SEMI:l
-		   {: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
-		   |
-		   (PrintStmt) PRINT LEFT_ROUND_BRACKET Expr RIGHT_ROUND_BRACKET SEMI
-		   |
-		   (ReturnExpr) RETURN Expr:t SEMI
-		   |
-		   (ReturnNoExpr) RETURN SEMI
-		   |
-		   (MatchedStatement) IF Expr Matched ELSE Matched
-		   ;
-			
 Expr ::= (AddExpr) Expr:te Addop Term:t
 	 |
 	 (TermExpr) Term:t

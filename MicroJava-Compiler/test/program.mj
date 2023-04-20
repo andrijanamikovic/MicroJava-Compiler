@@ -5,8 +5,10 @@ program MJProgram
 {
 	int main(int x){
 		break;
+		print(3);
 		continue;
 		return 0;
+		print();
 		
 	}
 }
