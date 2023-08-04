@@ -77,7 +77,7 @@ nonterminal FormPars, StatementList, FormalParamList, FormalParamDecl, Statement
 nonterminal Designator, Expr, Term, Factor, ActualPars, ActualParamList;
 nonterminal Relop, Addop, Mulop;
 nonterminal VarDeclList, VarDecl, VarDeclType, LastVarDecl, VarDeclBrackets;
-nonterminal ConstDecl, ConstDeclLine, ConstDeclType, ConstDeclList, MoreConstDecl;
+nonterminal ConstDecl, ConstDeclLine, ConstDeclList, MoreConstDecl;
 nonterminal MethodType, MethodReturnType, MethodVarDecl;
 nonterminal ProgDeclList , MoreVarDecl;
 nonterminal DesignatorStatement, ForEachLabel, PrintArgs;
@@ -96,9 +96,11 @@ AllDeclarationsList  ::= (ConstDeclarations) AllDeclarationsList ConstDecl
 						;
 
 ConstDecl ::= (ConstDecl) CONST Type:constType ConstDeclLine SEMI;
+VarDecl ::= (VarDecl) Type:varType VarDeclList SEMI;
 
 
-ConstDeclType ::= (ConstDeclType) Type:constType;
+
+
 
 ConstDeclLine ::= (ConstDeclarationLine) MoreConstDecl ConstDeclLine
 					|
@@ -119,14 +121,13 @@ ConstDeclList ::= (IntegerConstValue) IDENT:constName ASSIGNMENT NUMBER:numberCo
  				(NoConstValue) /* epsilon */
  				;
 
-VarDecl ::= (VarDecl) Type:varType VarDeclList SEMI;
 
-VarDeclList ::= (MoreVarList) MoreVarDecl VarDeclList 
+VarDeclList ::= (MoreVarList) MoreVarDecl COMMA VarDeclList 
 			|
 			(SingleVarDecl) LastVarDecl 
 		    ;
 		    
-MoreVarDecl ::= (MoreVar)  IDENT:varName VarDeclBrackets COMMA
+MoreVarDecl ::= (MoreVar)  IDENT:varName VarDeclBrackets 
 				|
 			   (ErrorVarStmt) error COMMA:l
 			   {: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :};
@@ -183,7 +184,7 @@ StatementList ::= (Statements) StatementList Statement
 
 Statement ::= (DesigStatment) DesignatorStatement SEMI
 				|
-				(ReadStatment) READ LEFT_ROUND_BRACKET DesignatorStatement RIGHT_ROUND_BRACKET SEMI
+				(ReadStatment) READ LEFT_ROUND_BRACKET Designator RIGHT_ROUND_BRACKET SEMI
 				|
 				(PrintStatment) PRINT LEFT_ROUND_BRACKET Expr PrintArgs RIGHT_ROUND_BRACKET SEMI
 				|
