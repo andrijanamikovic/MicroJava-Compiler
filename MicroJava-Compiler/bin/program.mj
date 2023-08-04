@@ -1,14 +1,11 @@
 program MJProgram
- int z;
- int a, b, c;
- const int x = 4;
+int a, b, c;
+const int x = 4;
 {
 	int main(int x){
-		break;
 		print(3);
-		continue;
-		return 0;
-		print();
-		
+		b = 7;
+		x ++;
+		print(5);
 	}
 }

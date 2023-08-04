@@ -45,28 +45,30 @@ import java_cup.runtime.Symbol;
 
 "program"   { return new_symbol(sym.PROG, yytext());}
 "print" 	{ return new_symbol(sym.PRINT, yytext()); }
-"return" 	{ return new_symbol(sym.RETURN, yytext()); }
-"void" 		{ return new_symbol(sym.VOID, yytext()); }
-"break"  	{ return new_symbol(sym.BREAK, yytext()); }
-"class"  	{ }
-"enum"  	{ return new_symbol(sym.ENUM, yytext()); }
-"else"  	{ return new_symbol(sym.ELSE, yytext()); }
-"const"		{ return new_symbol(sym.CONST, yytext()); }
-"if"		{ return new_symbol(sym.IF, yytext()); }
-"do"		{ return new_symbol(sym.DO, yytext()); }
-"while" 	{ return new_symbol(sym.WHILE, yytext()); }
-"new" 		{ return new_symbol(sym.NEW, yytext()); }
 "read" 		{ return new_symbol(sym.READ, yytext()); }
-"continue" 	{ return new_symbol(sym.CONTINUE, yytext()); }
-"foreach" 		{ return new_symbol(sym.FOREACH, yytext()); }
-"record" 	{ return new_symbol(sym.RECORD, yytext()); }
+"void" 		{ return new_symbol(sym.VOID, yytext()); }
+"const"		{ return new_symbol(sym.CONST, yytext()); }
+"findAny" 	{ return new_symbol(sym.findAny, yytext()); }
+"return" 	{ }
+"break"  	{ }
+"class"  	{ }
+"enum"  	{ }
+"else"  	{ }
+"if"		{ }
+"do"		{ }
+"while" 	{ }
+"new" 		{ }
+"continue" 	{ }
+"foreach" 	{ }
+"record" 	{ }
 
 
 //predefined values
 
-'.'		 	{ return new_symbol(sym.CHAR_CONST, yytext().charAt(1)); }
 "true" 		{ return new_symbol(sym.BOOL_CONST, true); }
 "false" 	{ return new_symbol(sym.BOOL_CONST, false); }
+'.'			{ return new_symbol(sym.CHAR_CONST, yytext().charAt(1)); }
+
 
 //Operators
 

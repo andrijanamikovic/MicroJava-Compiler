@@ -49,32 +49,25 @@ terminal Integer NUMBER;
 terminal String IDENT;
 terminal Character CHAR_CONST;
 terminal Boolean BOOL_CONST;
-terminal IF, ELSE;
+terminal findAny;
 
 terminal COLON;
 terminal ASSIGNMENT;
 terminal MULTIPLY;
 terminal MODUO;
-terminal NEW;
 terminal RIGHT_CURLY_BRACKET, LEFT_CURLY_BRACKET;
 terminal MINUS;
 terminal NOT_EQUAL;
 terminal CONST;
 terminal AND;
 terminal LESS;
-terminal ENUM;
-terminal BREAK;
 terminal READ;
 terminal INC;
-terminal FOREACH;
 terminal GREATER;
-terminal WHILE;
 terminal GREATER_EQUAL;
 terminal LESS_EQUAL;
 terminal DO;
-terminal RECORD;
 terminal POINT;
-terminal CONTINUE;
 terminal OR;
 terminal DEC;
 terminal DIVIDE;
@@ -84,12 +77,12 @@ nonterminal FormPars, StatementList, FormalParamList, FormalParamDecl, Statement
 nonterminal Designator, Expr, Term, Factor, ActualPars, ActualParamList;
 nonterminal Relop, Addop, Mulop;
 nonterminal VarDeclList, VarDecl, VarDeclType, LastVarDecl, VarDeclBrackets;
-nonterminal ConstDecl, ConstDeclType, ConstDeclList, MoreConstDecl;
+nonterminal ConstDecl, ConstDeclLine, ConstDeclType, ConstDeclList, MoreConstDecl;
 nonterminal MethodType, MethodReturnType, MethodVarDecl;
-nonterminal ProgDeclList, ConstDeclLine, MoreVarDecl;
-nonterminal Condition, DesignatorStatement, ForEachLabel, PrintArgs;
+nonterminal ProgDeclList , MoreVarDecl;
+nonterminal DesignatorStatement, ForEachLabel, PrintArgs;
+nonterminal Assignop, Label;
 
-precedence left ELSE;
 
 Program ::= (Program) PROG  ProgName AllDeclarationsList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
 
@@ -190,54 +183,58 @@ StatementList ::= (Statements) StatementList Statement
 
 Statement ::= (DesigStatment) DesignatorStatement SEMI
 				|
-				(WhileStatment) WHILE LEFT_ROUND_BRACKET Condition RIGHT_ROUND_BRACKET Statement
-				|
-				(BreakStatment) BREAK SEMI
-				|
-				(ContinueStatment) CONTINUE SEMI
-				|
-				(ReturnStatment) RETURN Expr SEMI
-				|
 				(ReadStatment) READ LEFT_ROUND_BRACKET DesignatorStatement RIGHT_ROUND_BRACKET SEMI
 				|
 				(PrintStatment) PRINT LEFT_ROUND_BRACKET Expr PrintArgs RIGHT_ROUND_BRACKET SEMI
 				|
-				(ForEachStatment) Designator POINT FOREACH LEFT_ROUND_BRACKET ForEachLabel RIGHT_ROUND_BRACKET SEMI
+				(FindAny) Designator EQUAL Designator POINT findAny LEFT_ROUND_BRACKET Expr RIGHT_ROUND_BRACKET SEMI
 				|
 				(MoreStatments) LEFT_CURLY_BRACKET Statement RIGHT_CURLY_BRACKET
-				|
-				(IfStatment) IF Expr Statement IF
-				|
-				(ElseStatment) IF Expr Statement ELSE Statement
 				;
 
-Condition ::= (Conditions) SEMI
-			;
-			
 PrintArgs ::= (ArgumentsForPrint) COMMA NUMBER 
 			|
 			(NoArgumentsForPrint)
 			;
 					
-DesignatorStatement ::= (DesStatment) SEMI
+DesignatorStatement ::= (DesStatmentAssign) Designator Assignop Expr 
+						| 
+						(DesStatmentInc) Designator INC
+						|
+						(DesStatmentDec) Designator DEC
 						;
 				
-ForEachLabel ::= (LabelForEach) SEMI
-				;
 
 Expr ::= (AddExpr) Expr:te Addop Term:t
-	 |
-	 (TermExpr) Term:t
-	 ;
+		|
+	 	(IntTermExpr) MINUS Term:t
+	 	|
+	 	(TermExpr) Term:t
+	 	;
 
-Term ::= (Term) Factor:t;
+Term ::= (TermFact) Factor:t
+		|
+		(TermMul) Term Mulop Factor:t
+		;
+		
 
-Factor ::= (Const) NUMBER
+Factor ::= (NumConst) NUMBER
+		|
+		(CharConst) CHAR_CONST
+		|
+		(BoolConst) BOOL_CONST
 		|
 		(Var) Designator:d
 		| 
 		(FuncCall) Designator:func LEFT_ROUND_BRACKET ActualPars RIGHT_ROUND_BRACKET
+		|
+		(ExprCall) LEFT_ROUND_BRACKET Expr RIGHT_ROUND_BRACKET
 		;
+		/*
+		|
+		(NewCallWithExpr) NEW Type LEFT_SQUARE_BRACKET Expr RIGHT_SQUARE_BRACKET
+		|
+		(NewCallWithPar) NEW Type LEFT_SQUARE_BRACKET ActualPars RIGHT_SQUARE_BRACKET */
 		
 ActualPars ::= (Actuals) ActualParamList
 			|
@@ -249,8 +246,16 @@ ActualParamList ::= (ActualParams) ActualParamList COMMA Expr
 				(ActualParam) Expr
 				;
 				
-Designator ::= (Designator) IDENT:name;
+Designator ::= (DesignatorName) IDENT:name
+			|
+			(SemiStartingDesignator) SEMI IDENT:name
+			|
+			(ExprDesignator) LEFT_SQUARE_BRACKET Expr RIGHT_SQUARE_BRACKET
+			;
 
+Label ::= (LabelStatmnt) IDENT:labelName;
+
+Assignop ::= (Assign) ASSIGNMENT;
 
 Relop ::= (EqualOp) EQUAL
 		|
