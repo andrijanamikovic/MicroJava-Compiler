@@ -1,14 +1,17 @@
 program MJProgram
+int i[];
 int a, b, c;
 int p;
 const int x = 4;
 const bool flag = true;
+int y[];
 const char z = 'a';
 {
-	int main(int x){
+	int main(int x)
+	int proba[];
+	{
 		read (x);
 		x--;
-		int y[];
 		print(3);
 		b = 7;
 		x++;

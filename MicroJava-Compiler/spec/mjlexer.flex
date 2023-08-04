@@ -48,6 +48,7 @@ import java_cup.runtime.Symbol;
 "read" 		{ return new_symbol(sym.READ, yytext()); }
 "void" 		{ return new_symbol(sym.VOID, yytext()); }
 "const"		{ return new_symbol(sym.CONST, yytext()); }
+"new" 		{ return new_symbol(sym.NEW, yytext()); }
 "findAny" 	{ return new_symbol(sym.findAny, yytext()); }
 "return" 	{ }
 "break"  	{ }
@@ -57,7 +58,6 @@ import java_cup.runtime.Symbol;
 "if"		{ }
 "do"		{ }
 "while" 	{ }
-"new" 		{ }
 "continue" 	{ }
 "foreach" 	{ }
 "record" 	{ }

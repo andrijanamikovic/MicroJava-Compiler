@@ -44,11 +44,12 @@ scan with {:
 	return s;
 :}
 
-terminal PROG, LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET, SEMI, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET, EQUAL, RETURN, PLUS, COMMA, PRINT, VOID;
+terminal PROG, LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET, SEMI, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET, EQUAL, RETURN, PLUS, COMMA, VOID;
 terminal Integer NUMBER;
 terminal String IDENT;
 terminal Character CHAR_CONST;
 terminal Boolean BOOL_CONST;
+terminal NEW;
 terminal findAny;
 
 terminal COLON;
@@ -62,6 +63,7 @@ terminal CONST;
 terminal AND;
 terminal LESS;
 terminal READ;
+terminal PRINT;
 terminal INC;
 terminal GREATER;
 terminal GREATER_EQUAL;
@@ -79,7 +81,7 @@ nonterminal Relop, Addop, Mulop;
 nonterminal VarDeclList, VarDecl, VarDeclType, LastVarDecl, VarDeclBrackets;
 nonterminal ConstDecl, ConstDeclLine, ConstDeclList, MoreConstDecl;
 nonterminal MethodType, MethodReturnType, MethodVarDecl;
-nonterminal ProgDeclList , MoreVarDecl;
+nonterminal ProgDeclList;
 nonterminal DesignatorStatement, ForEachLabel, PrintArgs;
 nonterminal Assignop, Label;
 
@@ -96,21 +98,20 @@ AllDeclarationsList  ::= (ConstDeclarations) AllDeclarationsList ConstDecl
 						;
 
 ConstDecl ::= (ConstDecl) CONST Type:constType ConstDeclLine SEMI;
+
 VarDecl ::= (VarDecl) Type:varType VarDeclList SEMI;
 
 
-
-
-
 ConstDeclLine ::= (ConstDeclarationLine) MoreConstDecl ConstDeclLine
-					|
- 					(SingleConstValue) ConstDeclList  /* epsilon */
- 					;
+				|
+ 				(SingleConstValue) ConstDeclList  /* epsilon */
+ 				;
 
 MoreConstDecl ::= (MoreConst) ConstDeclList COMMA
-					|
-					(ErrorConstStmt) error COMMA:l
-			   		{: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :};
+				|
+				(ErrorConstStmt) error COMMA:l
+			   	{: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
+			   	;
 
 ConstDeclList ::= (IntegerConstValue) IDENT:constName ASSIGNMENT NUMBER:numberConstValue
  				|
@@ -122,20 +123,16 @@ ConstDeclList ::= (IntegerConstValue) IDENT:constName ASSIGNMENT NUMBER:numberCo
  				;
 
 
-VarDeclList ::= (MoreVarList) MoreVarDecl COMMA VarDeclList 
+VarDeclList ::= (MoreVarList) VarDeclList COMMA LastVarDecl
 			|
 			(SingleVarDecl) LastVarDecl 
 		    ;
-		    
-MoreVarDecl ::= (MoreVar)  IDENT:varName VarDeclBrackets 
-				|
-			   (ErrorVarStmt) error COMMA:l
-			   {: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :};
 		   
 LastVarDecl ::= (LastVar) IDENT:varName VarDeclBrackets
                | 
                (ErrorLastVarDecl) SEMI:l
-                  {: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :};
+               {: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
+               ;
 
 
 VarDeclBrackets ::= (VarDeclArray) LEFT_SQUARE_BRACKET RIGHT_SQUARE_BRACKET
