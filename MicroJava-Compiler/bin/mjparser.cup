@@ -44,7 +44,7 @@ scan with {:
 	return s;
 :}
 
-terminal PROG, LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET, SEMI, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET, EQUAL, RETURN, PLUS, COMMA, VOID;
+terminal PROG, LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET, SEMI, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET, EQUAL, RETURN, COMMA, VOID;
 terminal Integer NUMBER;
 terminal String IDENT;
 terminal Character CHAR_CONST;
@@ -57,6 +57,7 @@ terminal ASSIGNMENT;
 terminal MULTIPLY;
 terminal MODUO;
 terminal RIGHT_CURLY_BRACKET, LEFT_CURLY_BRACKET;
+terminal PLUS;
 terminal MINUS;
 terminal NOT_EQUAL;
 terminal CONST;
@@ -82,8 +83,9 @@ nonterminal VarDeclList, VarDecl, VarDeclType, LastVarDecl, VarDeclBrackets;
 nonterminal ConstDecl, ConstDeclLine, ConstDeclList, MoreConstDecl;
 nonterminal MethodType, MethodReturnType, MethodVarDecl;
 nonterminal ProgDeclList;
-nonterminal DesignatorStatement, ForEachLabel, PrintArgs;
-nonterminal Assignop, Label;
+nonterminal DesignatorStatement, PrintArgs, DesignatorList;
+nonterminal Label;
+nonterminal ConstFactor;
 
 
 Program ::= (Program) PROG  ProgName AllDeclarationsList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
@@ -126,6 +128,9 @@ ConstDeclList ::= (IntegerConstValue) IDENT:constName ASSIGNMENT NUMBER:numberCo
 VarDeclList ::= (MoreVarList) VarDeclList COMMA LastVarDecl
 			|
 			(SingleVarDecl) LastVarDecl 
+			|
+			(ErrorVarDeclStmt) error COMMA:l
+			{: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
 		    ;
 		   
 LastVarDecl ::= (LastVar) IDENT:varName VarDeclBrackets
@@ -157,7 +162,7 @@ MethodReturnType ::= (VoidType) VOID
 					(ConcreteType) Type:retType
 					 ;
 
-MethodVarDecl ::= (MethodHasVariables) MethodVarDecl VarDecl
+MethodVarDecl ::= (MethodHasVariables) MethodVarDecl VarDecl /* stajalo mi i pre ovoga MethodVarDecl ali mislim da ne mora jer imam loop u VarDecl*/
 				  |
 				  (MethodHasNotVariables) /* epsilon */
 				  ;
@@ -167,7 +172,7 @@ FormPars ::= (FormParams) FormalParamList
 		  (NoFormParam) /* epsilon */
 		  ;
 		  
-FormalParamList ::= (FormalParamDecls) FormalParamDecl COMMA FormalParamList
+FormalParamList ::= (FormalParamDecls) FormalParamList COMMA FormalParamDecl
 				|
 				(SingleFormalParamDecl) FormalParamDecl
 				;
@@ -192,47 +197,61 @@ Statement ::= (DesigStatment) DesignatorStatement SEMI
 
 PrintArgs ::= (ArgumentsForPrint) COMMA NUMBER 
 			|
-			(NoArgumentsForPrint)
+			(NoArgumentsForPrint) /* epsilon */
 			;
 					
-DesignatorStatement ::= (DesStatmentAssign) Designator Assignop Expr 
-						| 
-						(DesStatmentInc) Designator INC
+DesignatorStatement ::= (DesStatmentAssign) Designator:desVar ASSIGNMENT Expr:e
+						|						
+						(DesStatmentInc) Designator:desVar INC
 						|
-						(DesStatmentDec) Designator DEC
+						(DesStatmentDec) Designator:desVar DEC
+						|
+						(DesStatmentMore) LEFT_SQUARE_BRACKET Designator DesignatorList RIGHT_SQUARE_BRACKET ASSIGNMENT Designator
+						|
+						(DesStatmentFunc) Designator:func LEFT_ROUND_BRACKET ActualPars RIGHT_ROUND_BRACKET
 						;
-				
 
-Expr ::= (AddExpr) Expr:te Addop Term:t
-		|
-	 	(IntTermExpr) MINUS Term:t
+DesignatorList ::= (DesignatorMany) DesignatorList COMMA Designator
+				|
+				(NoDesignator) /* epsilon */  
+				;
+			
+Expr ::= (OneNegTermExpr) MINUS Term:t
 	 	|
-	 	(TermExpr) Term:t
+	 	(AddExpr) Expr:te Addop Term:t
+	 	|
+	 	(OneTermExpr) Term:t
 	 	;
 
-Term ::= (TermFact) Factor:t
+Term ::= (TermMul) Term:t Mulop Factor:f
 		|
-		(TermMul) Term Mulop Factor:t
+		(TermFact) Factor:f
 		;
 		
 
-Factor ::= (NumConst) NUMBER
+Factor ::=  
+		(FactorConst) ConstFactor
 		|
-		(CharConst) CHAR_CONST
-		|
-		(BoolConst) BOOL_CONST
-		|
-		(Var) Designator:d
+		(FactorVariable) Designator
 		| 
-		(FuncCall) Designator:func LEFT_ROUND_BRACKET ActualPars RIGHT_ROUND_BRACKET
-		|
 		(ExprCall) LEFT_ROUND_BRACKET Expr RIGHT_ROUND_BRACKET
+		|
+		(NewCallWithPar) NEW Type LEFT_SQUARE_BRACKET ActualPars RIGHT_SQUARE_BRACKET
 		;
 		/*
+			|
+		(FuncCall) Designator:func LEFT_ROUND_BRACKET ActualPars RIGHT_ROUND_BRACKET
+		
+		bilo je ovde al prebacih u DesignatorStatment
+		*/
+		
+ConstFactor ::=  
+		(NumConst) NUMBER:valNum
 		|
-		(NewCallWithExpr) NEW Type LEFT_SQUARE_BRACKET Expr RIGHT_SQUARE_BRACKET
+		(CharConst) CHAR_CONST:valChar
 		|
-		(NewCallWithPar) NEW Type LEFT_SQUARE_BRACKET ActualPars RIGHT_SQUARE_BRACKET */
+		(BoolConst) BOOL_CONST:valBool
+		;
 		
 ActualPars ::= (Actuals) ActualParamList
 			|
@@ -248,12 +267,10 @@ Designator ::= (DesignatorName) IDENT:name
 			|
 			(SemiStartingDesignator) SEMI IDENT:name
 			|
-			(ExprDesignator) LEFT_SQUARE_BRACKET Expr RIGHT_SQUARE_BRACKET
+			(ExprDesignator) IDENT:name LEFT_SQUARE_BRACKET Expr RIGHT_SQUARE_BRACKET
 			;
 
 Label ::= (LabelStatmnt) IDENT:labelName;
-
-Assignop ::= (Assign) ASSIGNMENT;
 
 Relop ::= (EqualOp) EQUAL
 		|
@@ -277,6 +294,6 @@ Mulop ::= (MultplyOp) MULTIPLY
 		|
 		(DivideOp) DIVIDE
 		|
-		(ModuoOP) MODUO
+		(ModuoOp) MODUO
 		;
 		

@@ -1,0 +1,24 @@
+program MJProgram
+int i[];
+int a, b, c;
+int p;
+const int nula = 0;
+const int x = 4, n = 5;
+const bool flag = true;
+int y[];
+const char z = 'a';
+{
+	int main(int x)
+		int proba[];
+		bool br;
+	{
+		x = x + n;
+		x = x + 5;
+		read (x);
+		x--;
+		print(3);
+		b = 7;
+		x++;
+		print(5);
+	}
+}
