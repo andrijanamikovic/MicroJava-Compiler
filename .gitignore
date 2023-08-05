@@ -33,3 +33,6 @@ MicroJava-Compiler/bin/mjparser_astbuild.cup
 MicroJava-Compiler/spec/mjparser_astbuild.cup
 MicroJava-Compiler/bin/rs/ac/bg/etf/pp1/Yylex.java~
 MicroJava-Compiler/bin/rs/ac/bg/etf/pp1/Yylex.java~
+MicroJava-Compiler/bin/mjlexer.flex
+MicroJava-Compiler/bin/mjparser.cup
+MicroJava-Compiler/bin/rs/ac/bg/etf/pp1/Yylex.java~

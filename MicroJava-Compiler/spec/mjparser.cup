@@ -85,7 +85,7 @@ nonterminal MethodType, MethodReturnType, MethodVarDecl;
 nonterminal ProgDeclList;
 nonterminal DesignatorStatement, PrintArgs, DesignatorList;
 nonterminal Label;
-nonterminal ConstFactor, EpsilonDesignator;
+nonterminal ConstFactor, DesignatorLine;
 
 
 Program ::= (Program) PROG  ProgName AllDeclarationsList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
@@ -211,15 +211,15 @@ DesignatorStatement ::= (DesStatmentAssign) Designator:desVar ASSIGNMENT Expr:e
 						(DesStatmentFunc) Designator:func LEFT_ROUND_BRACKET ActualPars RIGHT_ROUND_BRACKET
 						;
 
-DesignatorList ::= (DesignatorMany) EpsilonDesignator COMMA DesignatorList
+DesignatorList ::= (DesignatorMany) DesignatorLine COMMA DesignatorList
 				|
-				(NoDesignator) EpsilonDesignator
+				(NoDesignatorList) DesignatorLine
 				;
 			
 				
-EpsilonDesignator ::= (DesignatorExists) Designator 
-						|
-					(DesignatorDoesntExist) /* epsilon */;
+DesignatorLine ::= (OneDesignator) Designator 
+				|
+				(NoDesignatore) /* epsilon */;
 			
 Expr ::= (OneNegTermExpr) MINUS Term:t
 	 	|
