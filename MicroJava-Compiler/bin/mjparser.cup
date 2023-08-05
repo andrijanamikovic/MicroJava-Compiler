@@ -85,7 +85,7 @@ nonterminal MethodType, MethodReturnType, MethodVarDecl;
 nonterminal ProgDeclList;
 nonterminal DesignatorStatement, PrintArgs, DesignatorList;
 nonterminal Label;
-nonterminal ConstFactor;
+nonterminal ConstFactor, EpsilonDesignator;
 
 
 Program ::= (Program) PROG  ProgName AllDeclarationsList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
@@ -206,15 +206,20 @@ DesignatorStatement ::= (DesStatmentAssign) Designator:desVar ASSIGNMENT Expr:e
 						|
 						(DesStatmentDec) Designator:desVar DEC
 						|
-						(DesStatmentMore) LEFT_SQUARE_BRACKET Designator DesignatorList RIGHT_SQUARE_BRACKET ASSIGNMENT Designator
+						(DesStatmentMore) LEFT_SQUARE_BRACKET DesignatorList RIGHT_SQUARE_BRACKET ASSIGNMENT Designator
 						|
 						(DesStatmentFunc) Designator:func LEFT_ROUND_BRACKET ActualPars RIGHT_ROUND_BRACKET
 						;
 
-DesignatorList ::= (DesignatorMany) DesignatorList COMMA Designator
+DesignatorList ::= (DesignatorMany) EpsilonDesignator COMMA DesignatorList
 				|
-				(NoDesignator) /* epsilon */  
+				(NoDesignator) EpsilonDesignator
 				;
+			
+				
+EpsilonDesignator ::= (DesignatorExists) Designator 
+						|
+					(DesignatorDoesntExist) /* epsilon */;
 			
 Expr ::= (OneNegTermExpr) MINUS Term:t
 	 	|
@@ -265,10 +270,11 @@ ActualParamList ::= (ActualParams) ActualParamList COMMA Expr
 				
 Designator ::= (DesignatorName) IDENT:name
 			|
-			(SemiStartingDesignator) SEMI IDENT:name
-			|
 			(ExprDesignator) IDENT:name LEFT_SQUARE_BRACKET Expr RIGHT_SQUARE_BRACKET
 			;
+			
+		/*|
+			(SemiStartingDesignator) SEMI IDENT:name za klase samo valjda*/
 
 Label ::= (LabelStatmnt) IDENT:labelName;
 

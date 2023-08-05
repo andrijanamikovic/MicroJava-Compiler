@@ -20,5 +20,6 @@ const char z = 'a';
 		b = 7;
 		x++;
 		print(5);
+		[,a,] = niz;
 	}
 }
