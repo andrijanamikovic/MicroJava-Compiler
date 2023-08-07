@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="lib/cup_v10k.jar"/>
 	<classpathentry kind="lib" path="lib/JFlex.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="D:/ETF/PP/symboltable-1-1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -3,6 +3,7 @@
 package rs.ac.bg.etf.pp1;
 
 import java_cup.runtime.*;
+
 import org.apache.log4j.*;
 import rs.ac.bg.etf.pp1.ast.*;
 
@@ -10,6 +11,7 @@ parser code {:
 
 	Logger log = Logger.getLogger(getClass());
    
+   	boolean errorDetected;
    
     // slede redefinisani metodi za prijavu gresaka radi izmene teksta poruke
      
@@ -36,6 +38,10 @@ parser code {:
 
 :}
 
+init with{:
+	errorDetected = false;
+
+:}
 
 scan with {:
 	Symbol s = this.getScanner().next_token();
@@ -75,18 +81,20 @@ terminal OR;
 terminal DEC;
 terminal DIVIDE;
 
-nonterminal Program, ProgName, AllDeclarationsList, MethodDeclList, Type, MethodDecl;
+nonterminal AllDeclarationsList, MethodDeclList;
 nonterminal FormPars, StatementList, FormalParamList, FormalParamDecl, Statement;
-nonterminal Designator, Expr, Term, Factor, ActualPars, ActualParamList;
-nonterminal Relop, Addop, Mulop;
+nonterminal Expr, Term, Factor, ActualPars, ActualParamList;
+nonterminal Relop, Addop, Mulop, Assignop;
 nonterminal VarDeclList, VarDecl, VarDeclType, LastVarDecl, VarDeclBrackets;
 nonterminal ConstDecl, ConstDeclLine, ConstDeclList, MoreConstDecl;
-nonterminal MethodType, MethodReturnType, MethodVarDecl;
+nonterminal MethodReturnType, MethodVarDecl;
 nonterminal ProgDeclList;
 nonterminal DesignatorStatement, PrintArgs, DesignatorList;
 nonterminal Label;
 nonterminal ConstFactor, DesignatorLine;
 
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodType, Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 
 Program ::= (Program) PROG  ProgName AllDeclarationsList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
 
@@ -101,7 +109,7 @@ AllDeclarationsList  ::= (ConstDeclarations) AllDeclarationsList ConstDecl
 
 ConstDecl ::= (ConstDecl) CONST Type:constType ConstDeclLine SEMI;
 
-VarDecl ::= (VarDecl) Type:varType VarDeclList SEMI;
+VarDecl ::= (VarDecl) Type VarDeclList SEMI;
 
 
 ConstDeclLine ::= (ConstDeclarationLine) MoreConstDecl ConstDeclLine
@@ -162,7 +170,7 @@ MethodReturnType ::= (VoidType) VOID
 					(ConcreteType) Type:retType
 					 ;
 
-MethodVarDecl ::= (MethodHasVariables) MethodVarDecl VarDecl /* stajalo mi i pre ovoga MethodVarDecl ali mislim da ne mora jer imam loop u VarDecl*/
+MethodVarDecl ::= (MethodHasVariables) MethodVarDecl VarDecl
 				  |
 				  (MethodHasNotVariables) /* epsilon */
 				  ;
@@ -242,13 +250,9 @@ Factor ::=
 		(ExprCall) LEFT_ROUND_BRACKET Expr RIGHT_ROUND_BRACKET
 		|
 		(NewCallWithPar) NEW Type LEFT_SQUARE_BRACKET ActualPars RIGHT_SQUARE_BRACKET
-		;
-		/*
-			|
+		|
 		(FuncCall) Designator:func LEFT_ROUND_BRACKET ActualPars RIGHT_ROUND_BRACKET
-		
-		bilo je ovde al prebacih u DesignatorStatment
-		*/
+		;
 		
 ConstFactor ::=  
 		(NumConst) NUMBER:valNum
@@ -268,9 +272,9 @@ ActualParamList ::= (ActualParams) ActualParamList COMMA Expr
 				(ActualParam) Expr
 				;
 				
-Designator ::= (DesignatorName) IDENT:name
+Designator ::= (DesignatorName) IDENT:desigName
 			|
-			(ExprDesignator) IDENT:name LEFT_SQUARE_BRACKET Expr RIGHT_SQUARE_BRACKET
+			(ExprDesignator) IDENT:desigNameExpr LEFT_SQUARE_BRACKET Expr RIGHT_SQUARE_BRACKET
 			;
 			
 		/*|
@@ -303,3 +307,4 @@ Mulop ::= (MultplyOp) MULTIPLY
 		(ModuoOp) MODUO
 		;
 		
+Assignop ::= ASSIGNMENT;
