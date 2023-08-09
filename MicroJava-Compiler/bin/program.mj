@@ -8,5 +8,7 @@ program test301
 	int niz[], niz2[], a, b;
 	char nizch[];
 {
-
+	void main() {
+		
+	}
 }
