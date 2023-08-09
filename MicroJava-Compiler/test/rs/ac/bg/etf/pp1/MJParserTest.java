@@ -29,9 +29,7 @@ public class MJParserTest {
 		
 		Reader br = null;
 		
-//		RuleVisitor v = new RuleVisitor();
-		SemanticPass v = new SemanticPass();
-		
+		RuleVisitor v = new RuleVisitor();		
 
 		try {
 			File sourceCode = new File("test/program.mj");

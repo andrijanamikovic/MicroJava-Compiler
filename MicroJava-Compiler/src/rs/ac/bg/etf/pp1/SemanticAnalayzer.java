@@ -11,9 +11,9 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 	boolean hasMain = false; 
 	boolean isArray = false;
 	int nVars;
-	Struct currentType;
+	Struct currentType = Tab.noType;
 	String typeName;
-	Struct currentMethodType;
+	Struct currentMethodType = Tab.noType;
 	Obj currentMethod;
 	Logger log = Logger.getLogger(getClass());
 	boolean returnFound = false;
@@ -159,6 +159,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 		nVars++;
 	}
 
+	
 	// Method..
 	public boolean checkUniqueMethod(String methodName) {
 		if (Tab.currentScope.findSymbol(methodName) != null) {
@@ -189,7 +190,9 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 	}
 	
 	public void visit(ConcreteType returnType) {
+		report_info("Udjes li ti pobratime ovde majke ti? " + returnType.getRetTypeName(), returnType);
 		Obj typeNode = Tab.find(returnType.getRetTypeName());
+		
 		if (typeNode == Tab.noObj) {
 			report_error("No type: " + returnType.getRetTypeName() + " in the symbol table! ", null);
 			returnType.struct = Tab.noType;
@@ -223,13 +226,43 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 	
 	public void visit(MethodDecl methodDecl) {
 		if(!returnFound && currentMethod.getType() != Tab.noType){
-			report_error("Semanticka greska na liniji " + methodDecl.getLine() + ": funkcija " + currentMethod.getName() + " nema return iskaz!", null);
+			report_error("Semantic error on the line: " + methodDecl.getLine() + ": function " + currentMethod.getName() + " doesn't have return!", null);
     	}
     	Tab.chainLocalSymbols(currentMethod);
+    	
     	Tab.closeScope();
     	
     	returnFound = false;
     	currentMethod = null;
+    	currentMethodType = null;
+    	typeName = "noTyp";
+	}
+	
+	//valjda mi samo void za main ?
+	public void visit(ReturnExpr returnExpr) {
+		returnFound = true;
+//		if (currentMethodType != returnExpr.getExpr().struct) {
+//			report_error("Error on the line: " + returnExpr.getLine() + " : " + "wrong return type " + currentMethod.getName() + " a ovde je: " + returnExpr.getExpr().struct, null);
+//		}
+	}
+	
+	public void visit (ReturnNoExpr returnNoExpr) {
+		returnFound = true;
+//		if (currentMethod.getType() != Tab.noType) {
+//			report_error("Error on the line: " + returnNoExpr.getLine() + " : " + "wrong return type it should be void " + currentMethod.getName(), null);
+//		}
+	}
+	
+	public void visit(NumConst numConst) {
+		numConst.struct = Tab.intType;
+	}
+	
+	public void visit(CharConst charConst) {
+		charConst.struct = Tab.charType;
+	}
+	
+	public void visit(BoolConst boolConst) {
+		boolConst.struct = TabExtension.boolType;
 	}
 	
 	public boolean passed() {
