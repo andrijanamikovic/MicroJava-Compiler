@@ -27,8 +27,6 @@ public class MJSemanticTest {
 
 		Reader br = null;
 
-		SemanticAnalayzer v = new SemanticAnalayzer();
-
 		try {
 			File sourceCode = new File("test/program.mj");
 			log.info("Compiling source file: " + sourceCode.getAbsolutePath());
@@ -40,8 +38,11 @@ public class MJSemanticTest {
 			Symbol s = p.parse(); // pocetak parsiranja
 
 			Program prog = (Program) (s.value);
-			// ispis sintaksnog stabla
+			
 			Tab.init();
+
+			SemanticAnalayzer v = new SemanticAnalayzer();
+			// ispis sintaksnog stabla
 			log.info(prog.toString(""));
 			log.info("===================================");
 
@@ -49,7 +50,11 @@ public class MJSemanticTest {
 			prog.traverseBottomUp(v);
 			log.info("===================================");
 			Tab.dump();
-
+			if(!p.errorDetected && v.passed()){
+				log.info("Parsiranje uspesno zavrseno!");
+			}else{
+				log.error("Parsiranje NIJE uspesno zavrseno!");
+			}
 		} finally {
 			if (br != null)
 				try {

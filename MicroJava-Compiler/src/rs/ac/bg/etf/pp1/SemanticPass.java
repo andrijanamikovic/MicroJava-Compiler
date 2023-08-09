@@ -101,8 +101,8 @@ public class SemanticPass extends VisitorAdaptor {
     	currentMethod = null;
     }
     
-    public void visit(Designator desig) {
-    		//    	Obj obj = Tab.find(desig.getDesigName());
-    		//nema mi ove funkcije??
+    public void visit(DesignatorOnly desig) {
+	    	Obj obj = Tab.find(desig.getDesignatorName());
+    		// ...
     }
 }

@@ -10,6 +10,7 @@
 				<exclude name="RuleVisitor.java"/>
 				<exclude name="SemanticPass.java"/>
 				<exclude name="SemanticAnalayzer.java"/>
+				<exclude name="TabExtension.java"/>
 			</fileset>
 		</delete>
 		<delete>

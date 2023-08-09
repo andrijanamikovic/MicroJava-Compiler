@@ -272,13 +272,15 @@ ActualParamList ::= (ActualParams) ActualParamList COMMA Expr
 				(ActualParam) Expr
 				;
 				
-Designator ::= (DesignatorName) IDENT:desigName
-			|
-			(ExprDesignator) IDENT:desigNameExpr LEFT_SQUARE_BRACKET Expr RIGHT_SQUARE_BRACKET
-			;
+Designator ::= (DesignatorOnly) IDENT:designatorName
+				|
+				(ExprDesignator) IDENT:desigatorNameExpr LEFT_SQUARE_BRACKET Expr RIGHT_SQUARE_BRACKET
+				;
 			
-		/*|
-			(SemiStartingDesignator) SEMI IDENT:name za klase samo valjda*/
+		/*
+		|
+		(SemiStartingDesignator) SEMI IDENT:name za klase samo valjda
+		*/
 
 Label ::= (LabelStatmnt) IDENT:labelName;
 
