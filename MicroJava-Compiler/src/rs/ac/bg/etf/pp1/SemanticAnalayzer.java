@@ -9,6 +9,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 
 	boolean errorDetected = false;
 	boolean hasMain = true; //TO DO: prebaci na false
+	boolean isArray = false;
 	int nVars;
 	Struct currentType;
 	Logger log = Logger.getLogger(getClass());
@@ -70,6 +71,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 		Obj constNode = Tab.find(constName);
 		if (constNode != Tab.noObj) {
 			report_error("Const: " + constName + " already declared!",  null);
+			return false;
 		}
 		return true;
 	}	
@@ -115,6 +117,42 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 		}
 		obj = Tab.insert(Obj.Con, name, currentType);
 		obj.setAdr(boolConst.getBoolConstValue() ? 1 : 0);
+	}
+	
+	//Var...
+	public boolean checkUniqueVariableLocal(String variableName) {
+		Obj varNode = Tab.find(variableName);
+		if (varNode != Tab.noObj) {
+			if (Tab.currentScope.findSymbol(variableName) != null) {
+				report_error("Variable: " + variableName + " already declared!",  null);
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public void visit(VarDeclArray array) {
+		isArray = true;
+	}
+	
+	public void visit(VariableIsNotArray array) {
+		isArray = false;
+	}
+	
+	public void visit(LastVar lastVar) {
+		String name = lastVar.getVarName();
+		Obj obj = Tab.find(name);
+		
+		if (!checkUniqueVariableLocal(name)) {
+			return;
+		} 
+		if (!isArray) {
+			Tab.insert(Obj.Var, name, currentType);
+		} else {
+			Tab.insert(Obj.Var, name, new Struct(Struct.Array, currentType));
+			isArray = false;
+		}
+		nVars++;
 	}
 
 	public boolean passed() {

@@ -4,6 +4,9 @@ program test301
 	const int pet = 5;
 	const bool flag = false;
 	const char c = 'c'; 
+	
+	int niz[], niz2[], a, b;
+	char nizch[];
 {
 
 }
