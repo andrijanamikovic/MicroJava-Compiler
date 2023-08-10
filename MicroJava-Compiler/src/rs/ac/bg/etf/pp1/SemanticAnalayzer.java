@@ -67,7 +67,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 			if (Obj.Type == typeNode.getKind()) {
 				type.struct = typeNode.getType();
 			} else {
-				report_error("Error: Name " + type.getTypeName() + " is not a type!", type);
+				report_error("Error: Name " + type.getTypeName() + " is not a type! " + Obj.Type + " sta ti je? " + typeNode.getKind(), type);
 				type.struct = Tab.noType;
 			}
 		}
@@ -193,7 +193,6 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 	}
 	
 	public void visit(ConcreteType returnType) {
-		report_info("Udjes li ti pobratime ovde majke ti? " + returnType.getRetTypeName(), returnType);
 		Obj typeNode = Tab.find(returnType.getRetTypeName());
 		
 		if (typeNode == Tab.noObj) {
@@ -221,7 +220,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 			hasMain = true;
 		}
 		
-		currentMethod = Tab.insert(Obj.Meth, typeName, currentMethodType);
+		currentMethod = Tab.insert(Obj.Meth, name, currentMethodType);
 		
 		Tab.openScope();
 		report_info("Processing function: " + name, methodPass);
@@ -241,19 +240,21 @@ public class SemanticAnalayzer extends VisitorAdaptor {
     	typeName = "noTyp";
 	}
 	
+
 	//valjda mi samo void za main ?
 	public void visit(ReturnExpr returnExpr) {
 		returnFound = true;
-//		if (currentMethodType != returnExpr.getExpr().struct) {
-//			report_error("Error on the line: " + returnExpr.getLine() + " : " + "wrong return type " + currentMethod.getName() + " a ovde je: " + returnExpr.getExpr().struct, null);
-//		}
+		if (currentMethodType != returnExpr.getExpr().struct) {
+			report_error("Error on the line: " + returnExpr.getLine() + " : " + "wrong return type " + currentMethod.getName() + " a ovde je: " + returnExpr.getExpr(), null);
+		}
+		
 	}
 	
 	public void visit (ReturnNoExpr returnNoExpr) {
 		returnFound = true;
-//		if (currentMethod.getType() != Tab.noType) {
-//			report_error("Error on the line: " + returnNoExpr.getLine() + " : " + "wrong return type it should be void " + currentMethod.getName(), null);
-//		}
+		if (currentMethod.getType() != Tab.noType) {
+			report_error("Error on the line: " + returnNoExpr.getLine() + " : " + "wrong return type it should be void " + currentMethod.getName(), null);
+		}
 	}
 	
 	public void visit(NumConst numConst) {
