@@ -83,7 +83,6 @@ terminal DIVIDE;
 
 nonterminal AllDeclarationsList, MethodDeclList;
 nonterminal FormPars, StatementList, FormalParamList, FormalParamDecl;
-nonterminal ActualPars, ActualParamList;
 nonterminal Relop, Addop, Mulop, Assignop;
 nonterminal VarDeclList, VarDecl, VarDeclType, LastVarDecl, VarDeclBrackets;
 nonterminal ConstDecl, ConstDeclLine, ConstDeclList, MoreConstDecl;
@@ -94,7 +93,7 @@ nonterminal Label;
 nonterminal DesignatorLine;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodType, Designator, Statement;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, MethodReturnType, Expr, Term, Factor, ConstFactor;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, MethodReturnType, Expr, Term, Factor, ConstFactor, ActualPars, ActualParamList;
 
 Program ::= (Program) PROG  ProgName AllDeclarationsList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
 
@@ -251,9 +250,9 @@ Factor ::=
 		|
 		(FactorVariable) Designator
 		| 
-		(ExprCall) LEFT_ROUND_BRACKET Expr RIGHT_ROUND_BRACKET
+		(ExprCall) LEFT_ROUND_BRACKET Expr:e RIGHT_ROUND_BRACKET
 		|
-		(NewCallWithPar) NEW Type LEFT_SQUARE_BRACKET ActualPars RIGHT_SQUARE_BRACKET
+		(NewCallWithPar) NEW Type:name LEFT_SQUARE_BRACKET ActualPars:index RIGHT_SQUARE_BRACKET
 		|
 		(FuncCall) Designator:func LEFT_ROUND_BRACKET ActualPars RIGHT_ROUND_BRACKET
 		;
@@ -266,14 +265,14 @@ ConstFactor ::=
 		(BoolConst) BOOL_CONST:valBool
 		;
 		
-ActualPars ::= (Actuals) ActualParamList
+ActualPars ::= (Actuals) ActualParamList:list
 			|
 			(NoActuals) /* epsilon */
 			;
 		
-ActualParamList ::= (ActualParams) ActualParamList COMMA Expr
+ActualParamList ::= (ActualParams) ActualParamList COMMA Expr:e
 				|
-				(ActualParam) Expr
+				(ActualParam) Expr:e
 				;
 				
 Designator ::= (DesignatorOnly) IDENT:designatorName

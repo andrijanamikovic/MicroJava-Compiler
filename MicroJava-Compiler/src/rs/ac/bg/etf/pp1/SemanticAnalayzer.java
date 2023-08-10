@@ -1,6 +1,9 @@
 package rs.ac.bg.etf.pp1;
 
 import rs.ac.bg.etf.pp1.ast.*;
+
+import java.lang.reflect.MalformedParameterizedTypeException;
+
 import org.apache.log4j.Logger;
 import rs.etf.pp1.symboltable.*;
 import rs.etf.pp1.symboltable.concepts.*;
@@ -264,6 +267,64 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 	public void visit(BoolConst boolConst) {
 		boolConst.struct = TabExtension.boolType;
 	}
+	
+	public void visit (TermFact termFacor) {
+		termFacor.struct = termFacor.getFactor().struct;
+	}
+	
+	public void visit (TermMul termMul) {
+		termMul.struct = termMul.getFactor().struct;
+	}
+	
+	public void visit (FactorConst factorConst) {
+		factorConst.struct = factorConst.getConstFactor().struct;
+	}
+	
+	public void visit (OneTermExpr oneTerm) {
+		oneTerm.struct = oneTerm.getTerm().struct;
+	}
+	
+// Factor Designator
+	public void visit (FactorVariable factorVariable) {
+		// simple var
+		// or array element
+		factorVariable.struct = factorVariable.getDesignator().obj.getType();
+		if (factorVariable.getDesignator().obj.getKind() == Obj.Var) {
+			if (factorVariable.getDesignator().obj.getKind() == Struct.Array) {
+				report_info("Pristup nizu " + factorVariable.getDesignator().obj.getName(), factorVariable);
+			} else {
+				report_info("Pristup promenljivoj " + factorVariable.getDesignator().obj.getName(), factorVariable);
+			}
+		}
+	}
+	
+	public void visit(ExprCall factorExpr) {
+		//TO DO
+	}
+	
+	public void visit (NewCallWithPar factorNew) {
+		//TO DO
+		if (factorNew.getActualPars().struct != Tab.intType) {
+			factorNew.struct = Tab.noType;
+			report_error("Array size needs to be an int!", factorNew);
+			return;
+		}
+		
+		factorNew.struct = new Struct(Struct.Array, factorNew.getActualPars().struct);
+	}
+	
+	public void visit(Actuals actualParam) {
+		actualParam.struct = actualParam.getActualParamList().struct;
+	}
+	
+	public void visit(ActualParam parametar) {
+		parametar.struct = parametar.getExpr().struct;
+	}
+	
+	public void visit(ActualParams parametar) {
+		parametar.struct = parametar.getExpr().struct;
+	}
+//Designator...
 	
 	public boolean passed() {
 		return !errorDetected;
