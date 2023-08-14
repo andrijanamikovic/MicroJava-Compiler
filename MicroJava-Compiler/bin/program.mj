@@ -8,11 +8,19 @@ program test301
 	int niz[], niz2[], a, b;
 	char nizch[];
 {
-	int main() {
-	
+	int main(char p) 
+	int x;
+	{
+		print(8);
 		a = 7;
+		a++;
 		print(5);
+		b = 6;
+		niz[1] = 5;
 		niz = new int[3];
+		a--;
+		read(pet);
+		niz[1] = 8;
 		return 5;
 	}
 }

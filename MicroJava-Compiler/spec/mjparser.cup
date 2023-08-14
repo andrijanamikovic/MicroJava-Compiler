@@ -82,18 +82,18 @@ terminal DEC;
 terminal DIVIDE;
 
 nonterminal AllDeclarationsList, MethodDeclList;
-nonterminal FormPars, FormalParamList, FormalParamDecl;
+nonterminal FormalParamList;
 nonterminal Relop, Addop, Mulop, Assignop;
 nonterminal VarDeclList, VarDecl, VarDeclType, LastVarDecl, VarDeclBrackets;
 nonterminal ConstDecl, ConstDeclLine, ConstDeclList, MoreConstDecl;
 nonterminal MethodVarDecl;
 nonterminal ProgDeclList;
-nonterminal DesignatorStatement, PrintArgs, DesignatorList;
+nonterminal PrintArgs;
 nonterminal Label;
-nonterminal DesignatorLine;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodType, Designator, Statement;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, MethodReturnType, Expr, Term, Factor, ConstFactor, ActualPars, ActualParamList, StatementList;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodType, Designator, Statement, DesignatorStatement, DesignatorArray;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, MethodReturnType, Expr, Term, Factor, ConstFactor,
+ActualPars, ActualParamList, StatementList, DesignatorList, DesignatorLine, FormPars, FormalParamDecl, DesignatorStatmentMore;
 
 Program ::= (Program) PROG  ProgName AllDeclarationsList LEFT_CURLY_BRACKET MethodDeclList RIGHT_CURLY_BRACKET;
 
@@ -174,14 +174,14 @@ MethodVarDecl ::= (MethodHasVariables) MethodVarDecl VarDecl
 				  (MethodHasNotVariables) /* epsilon */
 				  ;
   
-FormPars ::= (FormParams) FormalParamList
+FormPars ::= (FormParams) FormalParamList:formalList
 		  |
 		  (NoFormParam) /* epsilon */
 		  ;
 		  
-FormalParamList ::= (FormalParamDecls) FormalParamList COMMA FormalParamDecl
+FormalParamList ::= (FormalParamDecls) FormalParamList COMMA FormalParamDecl:formalParam
 				|
-				(SingleFormalParamDecl) FormalParamDecl
+				(SingleFormalParamDecl) FormalParamDecl:formalParam
 				;
 				
 FormalParamDecl ::= (FormalParamDeclaration) Type:paramType IDENT:parmName VarDeclBrackets;
@@ -217,18 +217,24 @@ DesignatorStatement ::= (DesStatmentAssign) Designator:desVar ASSIGNMENT Expr:e
 						|
 						(DesStatmentDec) Designator:desVar DEC
 						|
-						(DesStatmentMore) LEFT_SQUARE_BRACKET DesignatorList RIGHT_SQUARE_BRACKET ASSIGNMENT Designator
+						(DesStatmentmMulti) DesignatorStatmentMore
+						|						
+						(ErrorInDesStatment) error SEMI:l
+						{: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null); :}
 						|
 						(DesStatmentFunc) Designator:func LEFT_ROUND_BRACKET ActualPars RIGHT_ROUND_BRACKET
 						;
+						
 
-DesignatorList ::= (DesignatorMany) DesignatorLine COMMA DesignatorList
+DesignatorStatmentMore ::= (DesStatmentMore) LEFT_SQUARE_BRACKET DesignatorList RIGHT_SQUARE_BRACKET ASSIGNMENT Designator;
+
+DesignatorList ::= (DesignatorMany) DesignatorLine:d COMMA DesignatorList
 				|
-				(NoDesignatorList) DesignatorLine
+				(NoDesignatorList) DesignatorLine:d
 				;
 			
 				
-DesignatorLine ::= (OneDesignator) Designator 
+DesignatorLine ::= (OneDesignator) Designator:desig
 				|
 				(NoDesignatore) /* epsilon */;
 			
@@ -252,7 +258,7 @@ Factor ::=
 		| 
 		(ExprCall) LEFT_ROUND_BRACKET Expr:e RIGHT_ROUND_BRACKET
 		|
-		(NewCallWithPar) NEW Type:name LEFT_SQUARE_BRACKET ActualPars:index RIGHT_SQUARE_BRACKET
+		(NewCallWithPar) NEW Type:nameType LEFT_SQUARE_BRACKET Expr:index RIGHT_SQUARE_BRACKET
 		|
 		(FuncCall) Designator:func LEFT_ROUND_BRACKET ActualPars RIGHT_ROUND_BRACKET
 		;
@@ -277,8 +283,10 @@ ActualParamList ::= (ActualParams) ActualParamList COMMA Expr:e
 				
 Designator ::= (DesignatorOnly) IDENT:designatorName
 				|
-				(ExprDesignator) IDENT:desigatorNameExpr LEFT_SQUARE_BRACKET Expr RIGHT_SQUARE_BRACKET
+				(ExprDesignator) DesignatorArray:desArray LEFT_SQUARE_BRACKET Expr:expresion RIGHT_SQUARE_BRACKET
 				;
+
+DesignatorArray ::= (DesignatorArray)  Designator:designatorArray;
 			
 		/*
 		|

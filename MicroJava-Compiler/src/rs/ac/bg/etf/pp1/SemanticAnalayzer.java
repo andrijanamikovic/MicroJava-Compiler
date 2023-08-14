@@ -2,8 +2,6 @@ package rs.ac.bg.etf.pp1;
 
 import rs.ac.bg.etf.pp1.ast.*;
 
-import java.lang.reflect.MalformedParameterizedTypeException;
-
 import org.apache.log4j.Logger;
 import rs.etf.pp1.symboltable.*;
 import rs.etf.pp1.symboltable.concepts.*;
@@ -148,8 +146,6 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 
 	public void visit(LastVar lastVar) {
 		String name = lastVar.getVarName();
-		Obj obj = Tab.find(name);
-
 		if (!checkUniqueVariableLocal(name)) {
 			return;
 		}
@@ -158,6 +154,8 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 		} else {
 			Tab.insert(Obj.Var, name, new Struct(Struct.Array, currentType));
 			isArray = false;
+			Obj obj = Tab.find(name);
+			report_info("Ovde je za niz: " + name + " tip= " + obj.getType().getKind() , lastVar);
 		}
 		nVars++;
 	}
@@ -290,6 +288,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 		// simple var
 		// or array element
 		factorVariable.struct = factorVariable.getDesignator().obj.getType();
+		report_info("Pristup factorVarible: ", factorVariable);
 		if (factorVariable.getDesignator().obj.getKind() == Obj.Var) {
 			if (factorVariable.getDesignator().obj.getKind() == Struct.Array) {
 				report_info("Pristup nizu " + factorVariable.getDesignator().obj.getName(), factorVariable);
@@ -305,27 +304,140 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 	
 	public void visit (NewCallWithPar factorNew) {
 		//TO DO
-		if (factorNew.getActualPars().struct != Tab.intType) {
+		if (factorNew.getExpr().struct  != Tab.intType) {
 			factorNew.struct = Tab.noType;
 			report_error("Array size needs to be an int!", factorNew);
 			return;
 		}
-		
-		factorNew.struct = new Struct(Struct.Array, factorNew.getActualPars().struct);
+//		Struct nodeType = Tab.find(factorNew.getType());
+		// ili ovako ? 		factorNew.struct = new Struct(Struct.Array, factorNew.getType().struct); 
+//		factorNew.struct = new Struct(Struct.Array, factorNew.getActualPars().struct); 
+		factorNew.struct = new Struct(Struct.Array, factorNew.getType().struct); // ?
+		report_info("Ovde mi je tip: " + factorNew.getType().struct.getKind(), factorNew);
 	}
 	
-	public void visit(Actuals actualParam) {
-		actualParam.struct = actualParam.getActualParamList().struct;
-	}
-	
-	public void visit(ActualParam parametar) {
-		parametar.struct = parametar.getExpr().struct;
-	}
-	
-	public void visit(ActualParams parametar) {
-		parametar.struct = parametar.getExpr().struct;
-	}
+//	public void visit(Actuals actualParam) {
+//		actualParam.struct = actualParam.getActualParamList().struct;
+//	}
+//	
+//	public void visit(ActualParam parametar) {
+//		parametar.struct = parametar.getExpr().struct;
+//	}
+//	
+//	public void visit(ActualParams parametar) {
+//		parametar.struct = parametar.getExpr().struct;
+//	}
 //Designator...
+	
+	public void visit(DesignatorOnly designatorOnly) {
+		Obj node = Tab.find(designatorOnly.getDesignatorName());
+		if (node == Tab.noObj) {
+			report_error("Var: " + designatorOnly.getDesignatorName() + " is not declared!" , designatorOnly);
+		}
+		if (node == null) {
+			report_error("Node is null desifnatorOnly error", designatorOnly);
+		}
+		designatorOnly.obj = node;
+	}
+	
+	public void visit(ExprDesignator designatorWithExpr) {
+		//To do
+		//niz[3] = 7;
+//		Obj node = Tab.find(designatorWithExpr.getDesigatorNameExpr());
+		Obj node = designatorWithExpr.getDesignatorArray().obj;
+		if (node == null) {
+			report_error("Node je null???", designatorWithExpr);
+			return;
+		}
+		if ( node.getType().getKind() != Struct.Array) {
+			report_error("Var needs to be an array!" + node.getKind(), designatorWithExpr);
+		}
+		if ( designatorWithExpr.getExpr().struct != Tab.intType) {
+			report_error("Array index needs to be an int!" , designatorWithExpr);
+		}
+		designatorWithExpr.obj = new Obj(Obj.Elem, node.getName(), node.getType().getElemType());
+//		designatorWithExpr.obj = node;
+	}
+	
+	public void visit(DesStatmentAssign designatorAssign) {
+		Obj designatorObject = designatorAssign.getDesignator().obj;
+		if (designatorObject.getKind() != Obj.Var && designatorObject.getKind() != Obj.Elem) {
+			report_error("Assignment can be done only on a Var or Elem of an array! " + designatorObject.getType().getKind(), designatorAssign);
+		}
+		
+		report_info("Levo je: " + designatorObject.getKind(), designatorAssign);
+		if (designatorObject.getType().getKind() != Struct.Array) {
+			if (designatorObject.getType() != designatorAssign.getExpr().struct) {
+				report_error("Error1: Left and right side of assign operator, are diffrent type!" + " left type = " + designatorAssign.getDesignator().obj.getType().getKind() + 
+						" right type = " + designatorAssign.getExpr().struct.getKind(), designatorAssign);
+			}
+		} else {
+//			if (designatorObject.getType().getElemType().getKind() != designatorAssign.getExpr().struct.getKind()) {
+//				report_error("Error2: Left and right side of assign operator, are diffrent type! "
+//						+ "left type = " + designatorAssign.getDesignator().obj.getType().getElemType().getKind()
+//						+ " right type = " + designatorAssign.getExpr().struct.getKind(), designatorAssign);
+//			}
+			if (!designatorObject.getType().assignableTo(designatorAssign.getExpr().struct)) {
+				report_error("Error3: Left and right side of assign operator, are diffrent type! ", designatorAssign);
+			}
+		} 
+	}
+	
+	public void visit(DesStatmentInc designatorInc) {
+//		report_info("Increment on " + designatorInc.getDesignator(), designatorInc);
+		if (designatorInc.getDesignator().obj.getKind() != Obj.Var && designatorInc.getDesignator().obj.getKind() != Obj.Elem) {
+			report_error("Increment can be done only on a Var or Elem of an array!", designatorInc);
+		}
+		if (designatorInc.getDesignator().obj.getType() != Tab.intType) {
+			report_error("Increment with non int value!" , designatorInc);
+		}
+	}
+	
+	public void visit(DesStatmentDec designatorDec) {
+//		report_info("Decrement on " + designatorDec.getDesignator(), designatorDec);
+		if (designatorDec.getDesignator().obj.getKind() != Obj.Var && designatorDec.getDesignator().obj.getKind() != Obj.Elem) {
+			report_error("Decrement can be done only on a Var or Elem of an array!", designatorDec);
+		}
+		if (designatorDec.getDesignator().obj.getType() != Tab.intType) {
+			report_error("Decrement with non int value!" , designatorDec);
+		}
+	}
+	
+	public void visit(OneDesignator oneDesig) {
+		oneDesig.struct = oneDesig.getDesignator().obj.getType();
+	}
+	
+	public void visit(DesignatorMany designMany) {
+		designMany.struct = designMany.getDesignatorLine().struct;
+	}
+	
+	public void visit(NoDesignatorList desigOne) {
+		desigOne.struct = desigOne.getDesignatorLine().struct;
+	}
+	
+	public void visit(DesignatorArray desigArray) {
+		desigArray.obj = desigArray.getDesignator().obj;
+	}
+	
+	//--------------------------------------------------TO DO-------------------------------------
+	
+	public void visit(FormParams formParmas) {
+		//To do
+	}
+	
+	public void visit(FormalParamDecls formalParamDecl) {
+		//To do
+	}
+	
+	public void visit(SingleFormalParamDecl singleFormalParamDecl) {
+		//To do
+		
+	}
+	
+//	public void visit(FormalParamDeclaration formalParamDecleration) {
+//		//To do
+//	}
+//	
 	
 	public boolean passed() {
 		return !errorDetected;
