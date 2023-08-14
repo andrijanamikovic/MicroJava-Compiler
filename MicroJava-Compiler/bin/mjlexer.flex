@@ -49,7 +49,7 @@ import java_cup.runtime.Symbol;
 "void" 		{ return new_symbol(sym.VOID, yytext()); }
 "const"		{ return new_symbol(sym.CONST, yytext()); }
 "new" 		{ return new_symbol(sym.NEW, yytext()); }
-"findAny" 	{ return new_symbol(sym.findAny, yytext()); }
+"findAny" 	{ return new_symbol(sym.FIND_ANY, yytext()); }
 "return" 	{ return new_symbol(sym.RETURN, yytext()); }
 "break"  	{ }
 "class"  	{ }

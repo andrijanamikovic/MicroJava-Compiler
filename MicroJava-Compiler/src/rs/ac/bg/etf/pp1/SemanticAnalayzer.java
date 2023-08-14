@@ -456,10 +456,23 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 		}
 	}
 	
-//	public void visit(FormalParamDeclaration formalParamDecleration) {
-//		//To do
-//	}
-//	
+	public void visit(FindAny findAny) {
+		//To do
+		if (findAny.getDummyDesignator().obj.getType().getKind() != Struct.Array) {
+			report_error("FindAny, right operand needs to be an array!", findAny);
+			return;
+		}
+		if (findAny.getDesignator().obj.getType() != TabExtension.boolType) {
+			report_error("FindAny, left operand needs to be a bool!", findAny);
+			return;
+		}
+	}
+	
+	public void visit (DummyDesignator dummyDesignator) {
+		dummyDesignator.obj = dummyDesignator.getDesignator().obj;
+	}
+	
+	
 	
 	public boolean passed() {
 		return !errorDetected;

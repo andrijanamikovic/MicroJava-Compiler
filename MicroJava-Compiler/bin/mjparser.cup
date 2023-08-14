@@ -56,7 +56,7 @@ terminal String IDENT;
 terminal Character CHAR_CONST;
 terminal Boolean BOOL_CONST;
 terminal NEW;
-terminal findAny;
+terminal FIND_ANY;
 
 terminal COLON;
 terminal ASSIGNMENT;
@@ -91,7 +91,7 @@ nonterminal ProgDeclList;
 nonterminal PrintArgs;
 nonterminal Label;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodType, Designator, Statement, DesignatorStatement, DesignatorArray;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodType, Designator, Statement, DesignatorStatement, DesignatorArray, DummyDesignator;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, MethodReturnType, Expr, Term, Factor, ConstFactor,
 ActualPars, ActualParamList, StatementList, DesignatorList, DesignatorLine, FormPars, FormalParamDecl, DesignatorStatmentMore;
 
@@ -201,11 +201,13 @@ Statement ::= (DesigStatment) DesignatorStatement SEMI
 				|
 				(PrintStatment) PRINT LEFT_ROUND_BRACKET Expr PrintArgs RIGHT_ROUND_BRACKET SEMI
 				|
-				(FindAny) Designator EQUAL Designator POINT findAny LEFT_ROUND_BRACKET Expr RIGHT_ROUND_BRACKET SEMI
+				(FindAny) Designator:leftDesignator ASSIGNMENT DummyDesignator:rightDesignator  FIND_ANY LEFT_ROUND_BRACKET Expr RIGHT_ROUND_BRACKET SEMI
 				|
 				(MoreStatments) LEFT_CURLY_BRACKET Statement RIGHT_CURLY_BRACKET
 				;
 				
+DummyDesignator ::= (DummyDesignator) Designator POINT;
+
 PrintArgs ::= (ArgumentsForPrint) COMMA NUMBER 
 			|
 			(NoArgumentsForPrint) /* epsilon */
