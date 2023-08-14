@@ -487,7 +487,9 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 	}
 	
 	public void visit(PrintStatment printStetm) {
-		
+		if (printStetm.getExpr().struct != Tab.intType && printStetm.getExpr().struct != Tab.charType && printStetm.getExpr().struct != TabExtension.boolType) {
+			report_error("Print can only be done with int, char or bool type!" , printStetm);
+		}
 	}
 	
 	public boolean passed() {

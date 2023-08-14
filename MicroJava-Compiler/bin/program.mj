@@ -11,7 +11,7 @@ program test301
 	int main(char p) 
 	int x;
 	{
-		print(8);
+		print(jedan);
 		a = 7;
 		a++;
 		print(5);
