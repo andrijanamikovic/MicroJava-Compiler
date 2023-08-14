@@ -334,6 +334,10 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 //Designator...
 	
 	public void visit(DesignatorOnly designatorOnly) {
+		if (designatorOnly == null) {
+			report_error("Designator is null!", designatorOnly);
+			return;
+		}
 		Obj node = Tab.find(designatorOnly.getDesignatorName());
 		if (node == Tab.noObj) {
 			report_error("Var: " + designatorOnly.getDesignatorName() + " is not declared!" , designatorOnly);
@@ -472,7 +476,19 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 		dummyDesignator.obj = dummyDesignator.getDesignator().obj;
 	}
 	
+	public void visit(ReadStatment readStetm) {
+//		if (readStetm.getDesignator().obj.getType().getKind() != Struct.Array && readStetm.getDesignator().obj.getType().getKind() != Struct. )
+		if (readStetm.getDesignator().obj.getKind() != Obj.Var && readStetm.getDesignator().obj.getKind() != Obj.Elem) {
+			report_error("Read can be done only on a Var or Elem of an array!", readStetm);
+		}
+		if (readStetm.getDesignator().obj.getType() != Tab.intType && readStetm.getDesignator().obj.getType() != Tab.charType && readStetm.getDesignator().obj.getType() != TabExtension.boolType) {
+			report_error("Read can only be done with int, char or bool type!" , readStetm);
+		}
+	}
 	
+	public void visit(PrintStatment printStetm) {
+		
+	}
 	
 	public boolean passed() {
 		return !errorDetected;

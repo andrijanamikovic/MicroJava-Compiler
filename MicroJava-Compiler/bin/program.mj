@@ -19,7 +19,7 @@ program test301
 		niz[1] = 5;
 		niz = new int[3];
 		a--;
-		read(pet);
+		read(b);
 		niz[1] = 8;
 		return 5;
 	}

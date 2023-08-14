@@ -23,6 +23,7 @@ program MJProgram
 		y = arr[0] - y;
 		b = true;
 		b = arr.findAny(0);
+		b = barr.findAny(1);
 		return;
 	}
 }
