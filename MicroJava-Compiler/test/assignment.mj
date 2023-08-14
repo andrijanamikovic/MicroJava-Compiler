@@ -22,9 +22,6 @@ program MJProgram
 		arr[2] = arr[3] * 4;
 		y = arr[0] - y;
 		b = true;
-		cint = 2;
-		cint = y;
-		cchar = 'a';
 		return;
 	}
 }

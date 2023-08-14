@@ -272,6 +272,10 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 	}
 	
 	public void visit (TermMul termMul) {
+		if (termMul.getFactor().struct != Tab.intType || termMul.getTerm().struct != Tab.intType) {
+			report_error("Operands needs to be int type!", termMul);
+			termMul.struct = Tab.noType;
+		}
 		termMul.struct = termMul.getFactor().struct;
 	}
 	
@@ -432,6 +436,24 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 	public void visit(SingleFormalParamDecl singleFormalParamDecl) {
 		//To do
 		
+	}
+	//--------------------------------------------------------------------
+	public void visit(OneNegTermExpr termNeg) {
+		if (termNeg.getTerm().struct == Tab.intType) {
+			termNeg.struct = Tab.intType;
+		} else {
+			report_error("Operand needs to be an int!", termNeg);
+			termNeg.struct = Tab.noType;
+		}
+	}
+	
+	public void visit (AddExpr addTermExpr) {
+		if (addTermExpr.getTerm().struct != Tab.intType || addTermExpr.getExpr().struct != Tab.intType) {
+			report_error("Operands need to be int type!", addTermExpr);
+			addTermExpr.struct = Tab.noType;
+		} else {
+			addTermExpr.struct = Tab.intType;
+		}
 	}
 	
 //	public void visit(FormalParamDeclaration formalParamDecleration) {
