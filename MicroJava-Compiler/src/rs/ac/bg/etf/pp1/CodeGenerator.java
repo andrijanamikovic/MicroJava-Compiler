@@ -93,4 +93,8 @@ private int mainPc;
 			Code.load(designatorOnly.obj);
 		}
 	}
+	
+	public void visit(AddExpr addExpr) {
+		Code.put(Code.add);
+	}
 }
