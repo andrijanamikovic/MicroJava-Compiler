@@ -211,6 +211,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 	public void visit(MethodType methodPass) {
 		String name = methodPass.getMethName();
 		Obj obj = Tab.find(name);
+		methodPass.obj = obj;
 		if (!checkUniqueVariableLocal(name)) {
 			return;
 		}
