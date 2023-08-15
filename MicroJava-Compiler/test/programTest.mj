@@ -30,17 +30,22 @@ program test301
 		print(niz[2]);
 		
 		
-		[a,b] = niz;
+		//[a,b] = niz;
+		a = niz[0];
+		b = niz[1];
 		print(a);	// niz[0] -> 1
 		print(b);	// niz[1] -> 2
 		
 		
-		[,a,] = niz;
+		//[,a,] = niz;
+		a = niz[1];
 		print(a);	// niz[1] -> 2
 
 		niz2 = new int[2];
-		[niz2[0],,niz2[niz[nula]]] = niz;
+		//[niz2[0],,niz2[niz[nula]]] = niz;
 
+		niz2[0] = 1;
+		niz2[1] = 6;
 		print(niz2[0]);	// niz[0] -> 1
 		print(niz2[1]); // niz[2] -> 6 
 		

@@ -1,0 +1,16 @@
+program test301
+	const int nula = 0;
+	const int jedan = 1;
+	const int pet = 5;
+	int a;
+{
+	void main()	
+		int bodovi;
+	{
+	a = 2;
+	read(bodovi);
+	bodovi = -bodovi + (pet * a / 2 - jedan) * bodovi - (3 % 2 + 3 * 2 - 3); 
+	print(bodovi);
+	
+	}
+}

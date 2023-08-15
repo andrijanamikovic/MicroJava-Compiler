@@ -30,7 +30,7 @@ public class MJCodeGeneratorTest {
 		Reader br = null;
 
 		try {
-			File sourceCode = new File("test/codeTest.mj");
+			File sourceCode = new File("test/programTest.mj");
 			log.info("Compiling source file: " + sourceCode.getAbsolutePath());
 
 			br = new BufferedReader(new FileReader(sourceCode));

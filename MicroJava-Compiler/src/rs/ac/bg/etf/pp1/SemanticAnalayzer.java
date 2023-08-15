@@ -304,19 +304,15 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 	}
 	
 	public void visit(ExprCall factorExpr) {
-		//TO DO
+		factorExpr.struct = factorExpr.getExpr().struct;
 	}
 	
 	public void visit (NewCallWithPar factorNew) {
-		//TO DO
 		if (factorNew.getExpr().struct  != Tab.intType) {
 			factorNew.struct = Tab.noType;
 			report_error("Array size needs to be an int!", factorNew);
 			return;
 		}
-//		Struct nodeType = Tab.find(factorNew.getType());
-		// ili ovako ? 		factorNew.struct = new Struct(Struct.Array, factorNew.getType().struct); 
-//		factorNew.struct = new Struct(Struct.Array, factorNew.getActualPars().struct); 
 		factorNew.struct = new Struct(Struct.Array, factorNew.getType().struct); // ?
 		report_info("Ovde mi je tip: " + factorNew.getType().struct.getKind(), factorNew);
 	}
@@ -442,6 +438,8 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 		//To do
 		
 	}
+	
+	
 	//--------------------------------------------------------------------
 	public void visit(OneNegTermExpr termNeg) {
 		if (termNeg.getTerm().struct == Tab.intType) {
@@ -454,7 +452,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 	
 	public void visit (AddExpr addTermExpr) {
 		if (addTermExpr.getTerm().struct != Tab.intType || addTermExpr.getExpr().struct != Tab.intType) {
-			report_error("Operands need to be int type!", addTermExpr);
+			report_error("Operands need to be int type! ", addTermExpr);
 			addTermExpr.struct = Tab.noType;
 		} else {
 			addTermExpr.struct = Tab.intType;
@@ -462,7 +460,6 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 	}
 	
 	public void visit(FindAny findAny) {
-		//To do
 		if (findAny.getDummyDesignator().obj.getType().getKind() != Struct.Array) {
 			report_error("FindAny, right operand needs to be an array!", findAny);
 			return;
@@ -492,6 +489,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 			report_error("Print can only be done with int, char or bool type!" , printStetm);
 		}
 	}
+	
 	
 	public boolean passed() {
 		return !errorDetected;
