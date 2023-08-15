@@ -230,4 +230,17 @@ private int mainPc;
 			Code.put(1);
 		}
 	}
+	
+	public void visit(FindAny findAny) {
+		//TO DO
+		Code.load(findAny.getDesignator().obj); //boolean gde cuvam
+		Code.load(findAny.getDummyDesignator().obj); //adresa 
+		int i = 0;
+		Code.load(findAny.getDummyDesignator().obj); //adresa 
+		Code.put(Code.arraylength);
+		Code.loadConst(i);
+		Code.put(Code.eq);
+		
+		
+	}
 }

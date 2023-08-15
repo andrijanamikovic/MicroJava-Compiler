@@ -1,0 +1,21 @@
+program test301
+	bool flag;
+	int x;
+	char c;
+{
+	void main()	
+		int niz[];
+	{
+	niz = new int[3];
+	niz[0] = 1;
+	niz[1] = 2;
+	niz[2] = 6;
+	len(niz);
+	len(flag);
+	chr(x);
+	chr(c);
+	ord(c);
+	ord(x);
+	print(flag);
+	}
+}

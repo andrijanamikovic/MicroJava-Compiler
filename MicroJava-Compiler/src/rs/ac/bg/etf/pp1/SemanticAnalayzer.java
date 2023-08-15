@@ -2,6 +2,8 @@ package rs.ac.bg.etf.pp1;
 
 import rs.ac.bg.etf.pp1.ast.*;
 
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
 import rs.etf.pp1.symboltable.*;
 import rs.etf.pp1.symboltable.concepts.*;
@@ -21,6 +23,9 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 
 	public SemanticAnalayzer() {
 		Tab.currentScope.addToLocals(new Obj(Obj.Type, "bool", TabExtension.boolType));
+		// chr(e)
+		// ord(c)
+		// len(a)
 	}
 
 	public void report_error(String message, SyntaxNode info) {
@@ -317,17 +322,17 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 		report_info("Ovde mi je tip: " + factorNew.getType().struct.getKind(), factorNew);
 	}
 	
-//	public void visit(Actuals actualParam) {
-//		actualParam.struct = actualParam.getActualParamList().struct;
-//	}
-//	
-//	public void visit(ActualParam parametar) {
-//		parametar.struct = parametar.getExpr().struct;
-//	}
-//	
-//	public void visit(ActualParams parametar) {
-//		parametar.struct = parametar.getExpr().struct;
-//	}
+	public void visit(Actuals actualParam) {
+		actualParam.struct = actualParam.getActualParamList().struct;
+	}
+	
+	public void visit(ActualParam parametar) {
+		parametar.struct = parametar.getExpr().struct;
+	}
+	
+	public void visit(ActualParams parametar) {
+		parametar.struct = parametar.getExpr().struct;
+	}
 //Designator...
 	
 	public void visit(DesignatorOnly designatorOnly) {
@@ -490,8 +495,27 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 		}
 	}
 	
+	public void visit(DesStatmentFunc funcCall) {
+		String funcName = funcCall.getDesignator().obj.getName();
+		report_info("Proverava za funkciju: " + funcName, funcCall);
+		if ("chr".equalsIgnoreCase(funcName)) {
+			if (funcCall.getActualPars().struct != Tab.intType) {
+				report_error("chr() function needs to be used with int type!", funcCall);
+			}
+		} else if ("ord".equalsIgnoreCase(funcName)) {
+			if (funcCall.getActualPars().struct != Tab.charType) {
+				report_error("ord() function needs to be used with char type!", funcCall);
+			}
+		} else if ("len".equalsIgnoreCase(funcName)) {
+			if (funcCall.getActualPars().struct.getKind() != Struct.Array) {
+				report_error("len() function needs to be used with an array!", funcCall);
+			}
+		}
+	}
 	
 	public boolean passed() {
 		return !errorDetected;
 	}
+	
+	
 }
