@@ -16,10 +16,28 @@ private int mainPc;
 	
 	public void visit(PrintStatment printStmt){
 		if(printStmt.getExpr().struct == Tab.intType){
-			Code.loadConst(5);
+			if(printStmt.getPrintArgs().getClass() == NoArgumentsForPrint.class) {
+				Code.loadConst(5);
+			} else if (printStmt.getPrintArgs().getClass() == ArgumentsForPrint.class) {
+				ArgumentsForPrint args = (ArgumentsForPrint) printStmt.getPrintArgs();
+				Code.loadConst(args.getN1());
+			}
 			Code.put(Code.print);
-		}else{
-			Code.loadConst(1);
+		}else if (printStmt.getExpr().struct == TabExtension.boolType) {
+			if(printStmt.getPrintArgs().getClass() == NoArgumentsForPrint.class) {
+				Code.loadConst(5);
+			} else if (printStmt.getPrintArgs().getClass() == ArgumentsForPrint.class) {
+				ArgumentsForPrint args = (ArgumentsForPrint) printStmt.getPrintArgs();
+				Code.loadConst(args.getN1());
+			}
+			Code.put(Code.print);
+		}else {
+			if(printStmt.getPrintArgs().getClass() == NoArgumentsForPrint.class) {
+				Code.loadConst(1);
+			} else if (printStmt.getPrintArgs().getClass() == ArgumentsForPrint.class) {
+				ArgumentsForPrint args = (ArgumentsForPrint) printStmt.getPrintArgs();
+				Code.loadConst(args.getN1());
+			}
 			Code.put(Code.bprint);
 		}
 	}
@@ -28,6 +46,22 @@ private int mainPc;
 		Obj con = Tab.insert(Obj.Con, "$", cnst.struct);
 		con.setLevel(0);
 		con.setAdr(cnst.getValNum());
+		
+		Code.load(con);
+	}
+	
+	public void visit(CharConst cnst) {
+		Obj con = Tab.insert(Obj.Con, "$", cnst.struct);
+		con.setLevel(0);
+		con.setAdr(cnst.getValChar());
+		
+		Code.load(con);
+	}
+	
+	public void visit(BoolConst cnst) {
+		Obj con = Tab.insert(Obj.Con, "$", cnst.struct);
+		con.setLevel(0);
+		con.setAdr(cnst.getValBool() ? 1 : 0);
 		
 		Code.load(con);
 	}
@@ -66,6 +100,7 @@ private int mainPc;
 		Code.put(Code.exit);
 		Code.put(Code.return_);
 	}
+	///
 	
 	public void visit(ReturnNoExpr returnNoExpr) {
 		Code.put(Code.exit);
@@ -96,5 +131,17 @@ private int mainPc;
 	
 	public void visit(AddExpr addExpr) {
 		Code.put(Code.add);
+	}
+	
+	public void visit(IntegerConstValue intConst) {
+		Code.loadConst(intConst.getNumberConstValue());
+	}
+	
+	public void visit(CharConstValue charConst) {
+		Code.loadConst(charConst.getCharConstValue());
+	}
+	
+	public void visit (BoolConstValue boolConst) {
+		Code.loadConst(boolConst.getBoolConstValue() ? 1 : 0);
 	}
 }

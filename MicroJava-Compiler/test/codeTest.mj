@@ -1,5 +1,7 @@
 program MJProgram
 	int x; int y;
+	const char c = 'c';
+	const bool b = false;
 	{
 	
 		void main() {
@@ -8,6 +10,12 @@ program MJProgram
 			x = 3 + 2;
 			
 			print(x);
+			
+			print(c);
+			
+			print(0, 10);
+			
+			print(b);
 				
 		}
 	
