@@ -42,6 +42,15 @@ private int mainPc;
 		}
 	}
 	
+	public void visit(ReadStatment readStmt) {
+		if (readStmt.getDesignator().obj.getType() == Tab.charType) {
+			Code.put(Code.bread);
+		} else {
+			Code.put(Code.read);
+		}
+		Code.store(readStmt.getDesignator().obj);
+	}
+	
 	public void visit(NumConst cnst){
 		Obj con = Tab.insert(Obj.Con, "$", cnst.struct);
 		con.setLevel(0);
