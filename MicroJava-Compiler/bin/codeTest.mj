@@ -9,7 +9,7 @@ program MJProgram
 			print (1);
 			
 			x = 3 + 2;
-						
+			x++;			
 			print(x);
 			y = 12;
 			print(c);
@@ -19,6 +19,7 @@ program MJProgram
 			print(b);
 			
 			read(y);
+			y--;
 			print(y);
 				
 		}

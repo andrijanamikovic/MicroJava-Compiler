@@ -153,4 +153,31 @@ private int mainPc;
 	public void visit (BoolConstValue boolConst) {
 		Code.loadConst(boolConst.getBoolConstValue() ? 1 : 0);
 	}
+	
+	public void visit(DesStatmentInc desInc) {
+		if (desInc.getDesignator().obj.getKind() == Obj.Var) {
+			Code.load(desInc.getDesignator().obj);
+		} else {
+			// array elem
+			Code.put(Code.dup2);
+			Code.load(desInc.getDesignator().obj);
+		}
+		Code.loadConst(1);
+		Code.put(Code.add);
+		Code.store(desInc.getDesignator().obj);
+		
+	}
+	
+	public void visit(DesStatmentDec desDec) {
+		if (desDec.getDesignator().obj.getKind() == Obj.Var) {
+			Code.load(desDec.getDesignator().obj);
+		} else {
+			// array elem
+			Code.put(Code.dup2);
+			Code.load(desDec.getDesignator().obj);
+		}
+		Code.loadConst(1);
+		Code.put(Code.sub);
+		Code.store(desDec.getDesignator().obj);
+	}
 }
