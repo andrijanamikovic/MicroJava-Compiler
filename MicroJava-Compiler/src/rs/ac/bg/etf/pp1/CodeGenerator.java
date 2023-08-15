@@ -233,14 +233,21 @@ private int mainPc;
 	
 	public void visit(FindAny findAny) {
 		//TO DO
-		Code.load(findAny.getDesignator().obj); //boolean gde cuvam
 		Code.load(findAny.getDummyDesignator().obj); //adresa 
 		int i = 0;
 		Code.load(findAny.getDummyDesignator().obj); //adresa 
 		Code.put(Code.arraylength);
+		i = i + 1;
 		Code.loadConst(i);
-		Code.put(Code.eq);
-		
-		
+		Code.putFalseJump(Code.ne, 7);
+		Code.loadConst(i);
+		Code.put(Code.aload);
+		Code.putFalseJump(Code.eq, -6);
+		Code.loadConst(1); //nadjeno
+		Code.store(findAny.getDesignator().obj);
+		Code.putJump(2);
+		Code.loadConst(0); //nije
+		Code.store(findAny.getDesignator().obj);
+		return;
 	}
 }
