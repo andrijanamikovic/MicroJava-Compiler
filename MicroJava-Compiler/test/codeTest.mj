@@ -2,25 +2,43 @@ program MJProgram
 	int x; int y;
 	const char c = 'c';
 	const bool b = false;
+	int niz[];
+	int bodovi;
 	{
 	
 		void main()
 		 {
-			print (1);
+		 
+		bodovi = 0;
+		bodovi++;
+		bodovi = bodovi + 1;
+		bodovi = bodovi * 5;
+		bodovi--;
+		print(bodovi);
 			
-			x = 3 + 2;
-			x++;			
-			print(x);
-			y = 12;
-			print(c);
-			
-			print(0, 10);
-			
-			print(b);
-			
-			read(y);
-			y--;
-			print(y);
+		
+		niz = new int[3];
+		niz[0] = 1;
+		niz[1] = 2;
+		niz[niz[1]] = niz[niz[0]] * 3;
+		bodovi = niz[2]/niz[0];
+		print(bodovi);
+		print(niz[2]);
+		print (1);
+		
+		x = 3 + 2;
+		x++;			
+		print(x);
+		y = 12;
+		print(c);
+		
+		print(0, 10);
+		
+		print(b);
+		
+		read(y);
+		y--;
+		print(y);
 				
 		}
 	

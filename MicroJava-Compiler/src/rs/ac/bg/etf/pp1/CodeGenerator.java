@@ -98,17 +98,17 @@ private int mainPc;
 	}
 	
 	//mozda mi ne trebaju ove naredne dve
-	public void visit(VoidType methodDecl) {
-		
-		Code.put(Code.exit);
-		Code.put(Code.return_);
-	}
-	
-	public void visit(ConcreteType methodDecl) {
-		
-		Code.put(Code.exit);
-		Code.put(Code.return_);
-	}
+//	public void visit(VoidType methodDecl) {
+//		
+//		Code.put(Code.exit);
+//		Code.put(Code.return_);
+//	}
+//	
+//	public void visit(ConcreteType methodDecl) {
+//		
+//		Code.put(Code.exit);
+//		Code.put(Code.return_);
+//	}
 	///
 	
 	public void visit(ReturnNoExpr returnNoExpr) {
@@ -130,38 +130,77 @@ private int mainPc;
 		Code.store(designatorAssign.getDesignator().obj);
 	}
 	
-	public void visit(DesignatorOnly designatorOnly) {
+	public void visit(FactorVariable designatorOnly) {
 		SyntaxNode parent = designatorOnly.getParent();
 		
 		if (DesStatmentAssign.class != parent.getClass() && FuncCall.class != parent.getClass()) {
-			Code.load(designatorOnly.obj);
+			Code.load(designatorOnly.getDesignator().obj); 
 		}
 	}
 	
+//	//
+//	public void visit(DesStatmentMore desMore) {
+//		Code.load(desMore.getDesignator().obj);
+//	}
+//	//
+	
 	public void visit(AddExpr addExpr) {
-		Code.put(Code.add);
+		if (addExpr.getAddop().getClass() == PlusOp.class) {
+			Code.put(Code.add);
+		} else {
+			Code.put(Code.sub);
+		}
 	}
 	
-	public void visit(IntegerConstValue intConst) {
-		Code.loadConst(intConst.getNumberConstValue());
+	public void visit(OneNegTermExpr oneNeg) {
+		Code.put(Code.neg);
 	}
 	
-	public void visit(CharConstValue charConst) {
-		Code.loadConst(charConst.getCharConstValue());
+	
+	
+	public void visit(TermMul mullOp) {
+		if (mullOp.getMulop().getClass() == MultplyOp.class) {
+			Code.put(Code.mul);
+		} else if (mullOp.getMulop().getClass() == DivideOp.class) {
+			Code.put(Code.div);
+		} else {
+			Code.put(Code.rem);
+		}
 	}
 	
-	public void visit (BoolConstValue boolConst) {
-		Code.loadConst(boolConst.getBoolConstValue() ? 1 : 0);
+	public void visit(IntegerConstValue cnst) {
+		Obj con = Tab.insert(Obj.Con, "$", Tab.intType);
+		con.setLevel(0);
+		con.setAdr(cnst.getNumberConstValue());
+		
+		Code.load(con);
+//		Code.loadConst(intConst.getNumberConstValue());
+	}
+	
+	public void visit(CharConstValue cnst) {
+		Obj con = Tab.insert(Obj.Con, "$", Tab.charType);
+		con.setLevel(0);
+		con.setAdr(cnst.getCharConstValue());
+		
+		Code.load(con);
+//		Code.loadConst(charConst.getCharConstValue());
+	}
+	
+	public void visit (BoolConstValue cnst) {
+		Obj con = Tab.insert(Obj.Con, "$", TabExtension.boolType);
+		con.setLevel(0);
+		con.setAdr(cnst.getBoolConstValue() ? 1 : 0);
+		
+		Code.load(con);
+//		Code.loadConst(boolConst.getBoolConstValue() ? 1 : 0);
 	}
 	
 	public void visit(DesStatmentInc desInc) {
-		if (desInc.getDesignator().obj.getKind() == Obj.Var) {
-			Code.load(desInc.getDesignator().obj);
-		} else {
+		if (desInc.getDesignator().obj.getKind() == Obj.Elem){
 			// array elem
 			Code.put(Code.dup2);
-			Code.load(desInc.getDesignator().obj);
-		}
+		} 
+		Code.load(desInc.getDesignator().obj);
 		Code.loadConst(1);
 		Code.put(Code.add);
 		Code.store(desInc.getDesignator().obj);
@@ -169,15 +208,26 @@ private int mainPc;
 	}
 	
 	public void visit(DesStatmentDec desDec) {
-		if (desDec.getDesignator().obj.getKind() == Obj.Var) {
-			Code.load(desDec.getDesignator().obj);
-		} else {
+		if (desDec.getDesignator().obj.getKind() == Obj.Elem){
 			// array elem
-			Code.put(Code.dup2);
-			Code.load(desDec.getDesignator().obj);
+			Code.put(Code.dup2);	
 		}
+		Code.load(desDec.getDesignator().obj);
 		Code.loadConst(1);
 		Code.put(Code.sub);
 		Code.store(desDec.getDesignator().obj);
+	}
+	
+	public void visit(DesignatorArray desigArray) {
+		Code.load(desigArray.getDesignator().obj);
+	}
+	
+	public void visit(NewCallWithPar newArray) {
+		Code.put(Code.newarray);
+		if (newArray.struct.getElemType() == Tab.charType) {
+			Code.put(0);
+		} else {
+			Code.put(1);
+		}
 	}
 }

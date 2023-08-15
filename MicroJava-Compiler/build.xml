@@ -75,6 +75,7 @@
 	<target name="runObj" depends="disasm" >
 		<java classname="rs.etf.pp1.mj.runtime.Run">
 			<arg value="test/program.obj"/>
+			<redirector input="input.txt" />
 			<classpath>
 				<pathelement location="lib/mj-runtime-1.1.jar"/>
 			</classpath>
