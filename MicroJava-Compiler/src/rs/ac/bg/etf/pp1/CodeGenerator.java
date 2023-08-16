@@ -268,6 +268,12 @@ public int getMainPc(){
 		if ("len".equalsIgnoreCase(funcName)) {
 			Code.put(Code.arraylength);
 			return;
+		}  else if ("chr".equalsIgnoreCase(funcName)) {
+			//treba da prebaci i u chr
+			return;
+		} else if ("ord".equalsIgnoreCase(funcName)) {
+			//treba iz chr u i
+			return;
 		}
 	}
 	
@@ -275,6 +281,12 @@ public int getMainPc(){
 		String funcName = funCall.getDesignator().obj.getName();
 		if ("len".equalsIgnoreCase(funcName)) {
 			Code.put(Code.arraylength);
+			return;
+		} else if ("chr".equalsIgnoreCase(funcName)) {
+			//treba da prebaci i u chr
+			return;
+		} else if ("ord".equalsIgnoreCase(funcName)) {
+			//treba iz chr u i
 			return;
 		}
 	}

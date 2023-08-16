@@ -23,9 +23,6 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 
 	public SemanticAnalayzer() {
 		Tab.currentScope.addToLocals(new Obj(Obj.Type, "bool", TabExtension.boolType));
-		// chr(e)
-		// ord(c)
-		// len(a)
 	}
 
 	public void report_error(String message, SyntaxNode info) {
@@ -347,7 +344,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 			report_error("Node is null designatorOnly error", designatorOnly);
 		}
 		designatorOnly.obj = node;
-		report_info("Designator : " + designatorOnly.getDesignatorName() + " node.kind() = " + node.getKind(), designatorOnly);
+//		report_info("Designator : " + designatorOnly.getDesignatorName() + " node.kind() = " + node.getKind(), designatorOnly);
 	}
 	
 	public void visit(ExprDesignator designatorWithExpr) {
@@ -376,7 +373,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 		}
 		
 		if (designatorObject.getType().getKind() != Struct.Array) {
-			report_info("Ovde mi tip: " + designatorObject.getType().getKind(), designatorAssign);
+//			report_info("Ovde mi tip: " + designatorObject.getType().getKind(), designatorAssign);
 			if (designatorObject.getType() != designatorAssign.getExpr().struct) {
 				report_error("Error1: Left and right side of assign operator, are diffrent type!" + " left type = " + designatorAssign.getDesignator().obj.getType().getKind() + 
 						" right type = " + designatorAssign.getExpr().struct.getKind(), designatorAssign);

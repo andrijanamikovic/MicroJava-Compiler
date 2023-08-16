@@ -1,6 +1,7 @@
 program test301
 	bool flag;
 	int y;
+	char ch;
 {
 	void main()	
 		int niz[];
@@ -13,7 +14,12 @@ program test301
 	niz[4] = 8;
 	flag = niz.findAny(5);
 	print(flag);
+	print(eol);
 	y = len(niz);
 	print(y);
+	y = ord('c');
+	print(y);
+	ch = ch(y);
+	print(ch);
 	}
 }
