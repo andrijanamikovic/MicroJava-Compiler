@@ -1,5 +1,6 @@
 program test301
 	bool flag;
+	int y;
 {
 	void main()	
 		int niz[];
@@ -12,5 +13,7 @@ program test301
 	niz[4] = 8;
 	flag = niz.findAny(5);
 	print(flag);
+	y = len(niz);
+	print(y);
 	}
 }

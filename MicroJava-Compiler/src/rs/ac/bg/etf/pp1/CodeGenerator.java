@@ -12,9 +12,7 @@ private int mainPc;
 private int adr1;
 private int adr2;
 private int adr3;
-private int i;
-private Obj constValue;
-	public int getMainPc(){
+public int getMainPc(){
 		return mainPc;
 	}
 	
@@ -59,7 +57,6 @@ private Obj constValue;
 		Obj con = Tab.insert(Obj.Con, "$", cnst.struct);
 		con.setLevel(0);
 		con.setAdr(cnst.getValNum());
-		constValue = con;
 		Code.load(con);
 	}
 	
@@ -67,8 +64,6 @@ private Obj constValue;
 		Obj con = Tab.insert(Obj.Con, "$", cnst.struct);
 		con.setLevel(0);
 		con.setAdr(cnst.getValChar());
-		constValue = con;
-
 		Code.load(con);
 	}
 	
@@ -76,8 +71,6 @@ private Obj constValue;
 		Obj con = Tab.insert(Obj.Con, "$", cnst.struct);
 		con.setLevel(0);
 		con.setAdr(cnst.getValBool() ? 1 : 0);
-		constValue = con;
-
 		Code.load(con);
 	}
 	
@@ -268,5 +261,21 @@ private Obj constValue;
 		Code.store(findAny.getDesignator().obj);
 		Code.fixup(adr3);
 		return;
+	}
+	
+	public void visit(DesStatmentFunc funcCall) {
+		String funcName = funcCall.getDesignator().obj.getName();
+		if ("len".equalsIgnoreCase(funcName)) {
+			Code.put(Code.arraylength);
+			return;
+		}
+	}
+	
+	public void visit(FuncCall funCall) {
+		String funcName = funCall.getDesignator().obj.getName();
+		if ("len".equalsIgnoreCase(funcName)) {
+			Code.put(Code.arraylength);
+			return;
+		}
 	}
 }
