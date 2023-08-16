@@ -21,17 +21,17 @@ parser code {:
     }
   
     public void syntax_error(Symbol cur_token) {
-        report_error("\nSintaksna greska", cur_token);
+        report_error("\nSyntax error", cur_token);
     }
   
     public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
-        report_fatal_error("Fatalna greska, parsiranje se ne moze nastaviti", cur_token);
+        report_fatal_error("Fatal error, parsing can't be continued", cur_token);
     }
 
     public void report_error(String message, Object info) {
     	StringBuilder msg = new StringBuilder(message); 
     	if (info instanceof Symbol)
-            msg.append (" na liniji ").append(((Symbol)info).left);
+            msg.append (" on line ").append(((Symbol)info).left);
         log.error(msg.toString());
     }
 
@@ -119,7 +119,7 @@ ConstDeclLine ::= (ConstDeclarationLine) MoreConstDecl ConstDeclLine
 MoreConstDecl ::= (MoreConst) ConstDeclList COMMA
 				|
 				(ErrorConstStmt) error COMMA:l
-			   	{: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
+			   	{: parser.report_error("Recovery done ; on line " + lleft, null);  :}
 			   	;
 
 ConstDeclList ::= (IntegerConstValue) IDENT:constName ASSIGNMENT NUMBER:numberConstValue
@@ -137,13 +137,13 @@ VarDeclList ::= (MoreVarList) VarDeclList COMMA LastVarDecl
 			(SingleVarDecl) LastVarDecl 
 			|
 			(ErrorVarDeclStmt) error COMMA:l
-			{: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
+		   	{: parser.report_error("Recovery done ; on line " + lleft, null);  :}
 		    ;
 		   
 LastVarDecl ::= (LastVar) IDENT:varName VarDeclBrackets
                | 
                (ErrorLastVarDecl) SEMI:l
-               {: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
+			   	{: parser.report_error("Recovery done ; on line " + lleft, null);  :}
                ;
 
 
@@ -222,7 +222,7 @@ DesignatorStatement ::= (DesStatmentAssign) Designator:desVar ASSIGNMENT Expr:e
 						(DesStatmentmMulti) DesignatorStatmentMore
 						|						
 						(ErrorInDesStatment) error SEMI:l
-						{: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null); :}
+			   			{: parser.report_error("Recovery done ; on line " + lleft, null);  :}
 						|
 						(DesStatmentFunc) Designator:func LEFT_ROUND_BRACKET ActualPars RIGHT_ROUND_BRACKET
 						;

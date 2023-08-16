@@ -9,6 +9,9 @@ import rs.etf.pp1.symboltable.concepts.Obj;
 
 public class CodeGenerator extends VisitorAdaptor {
 private int mainPc;
+private int adr1;
+private int adr2;
+private int adr3;
 	
 	public int getMainPc(){
 		return mainPc;
@@ -168,32 +171,32 @@ private int mainPc;
 		}
 	}
 	
-	public void visit(IntegerConstValue cnst) {
-		Obj con = Tab.insert(Obj.Con, "$", Tab.intType);
-		con.setLevel(0);
-		con.setAdr(cnst.getNumberConstValue());
-		
-		Code.load(con);
-//		Code.loadConst(intConst.getNumberConstValue());
-	}
-	
-	public void visit(CharConstValue cnst) {
-		Obj con = Tab.insert(Obj.Con, "$", Tab.charType);
-		con.setLevel(0);
-		con.setAdr(cnst.getCharConstValue());
-		
-		Code.load(con);
-//		Code.loadConst(charConst.getCharConstValue());
-	}
-	
-	public void visit (BoolConstValue cnst) {
-		Obj con = Tab.insert(Obj.Con, "$", TabExtension.boolType);
-		con.setLevel(0);
-		con.setAdr(cnst.getBoolConstValue() ? 1 : 0);
-		
-		Code.load(con);
-//		Code.loadConst(boolConst.getBoolConstValue() ? 1 : 0);
-	}
+//	public void visit(IntegerConstValue cnst) {
+//		Obj con = Tab.insert(Obj.Con, "$", Tab.intType);
+//		con.setLevel(0);
+//		con.setAdr(cnst.getNumberConstValue());
+//		
+//		Code.load(con);
+////		Code.loadConst(intConst.getNumberConstValue());
+//	}
+//	
+//	public void visit(CharConstValue cnst) {
+//		Obj con = Tab.insert(Obj.Con, "$", Tab.charType);
+//		con.setLevel(0);
+//		con.setAdr(cnst.getCharConstValue());
+//		
+//		Code.load(con);
+////		Code.loadConst(charConst.getCharConstValue());
+//	}
+//	
+//	public void visit (BoolConstValue cnst) {
+//		Obj con = Tab.insert(Obj.Con, "$", TabExtension.boolType);
+//		con.setLevel(0);
+//		con.setAdr(cnst.getBoolConstValue() ? 1 : 0);
+//		
+//		Code.load(con);
+////		Code.loadConst(boolConst.getBoolConstValue() ? 1 : 0);
+//	}
 	
 	public void visit(DesStatmentInc desInc) {
 		if (desInc.getDesignator().obj.getKind() == Obj.Elem){
@@ -233,21 +236,30 @@ private int mainPc;
 	
 	public void visit(FindAny findAny) {
 		//TO DO
-		Code.load(findAny.getDummyDesignator().obj); //adresa 
 		int i = 0;
+//		adr1 = Code.pc - 2;
+		Code.fixup(adr1);
+		Code.load(findAny.getDummyDesignator().obj); //adresa 
 		Code.load(findAny.getDummyDesignator().obj); //adresa 
 		Code.put(Code.arraylength);
-		i = i + 1;
 		Code.loadConst(i);
-		Code.putFalseJump(Code.ne, 7);
+		Code.putFalseJump(Code.ne, 0);
+		adr1 = Code.pc - 1;
 		Code.loadConst(i);
 		Code.put(Code.aload);
-		Code.putFalseJump(Code.eq, -6);
+		i = i + 1;
+		Code.putFalseJump(Code.eq, 0);
+		adr2 = Code.pc - 1;
 		Code.loadConst(1); //nadjeno
 		Code.store(findAny.getDesignator().obj);
-		Code.putJump(2);
+		Code.putJump(0);
+		adr3 = Code.pc - 1;
+		Code.fixup(adr2);
+//		adr3 = Code.pc - 2;
 		Code.loadConst(0); //nije
 		Code.store(findAny.getDesignator().obj);
+		Code.fixup(adr3);
+//		adr2 = Code.pc - 2;
 		return;
 	}
 }

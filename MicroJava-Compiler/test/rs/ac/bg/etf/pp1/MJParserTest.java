@@ -32,7 +32,7 @@ public class MJParserTest {
 		RuleVisitor v = new RuleVisitor();		
 
 		try {
-			File sourceCode = new File("test/program.mj");
+			File sourceCode = new File("test/findAny.mj");
 			log.info("Compiling source file: " + sourceCode.getAbsolutePath());
 			
 			br = new BufferedReader(new FileReader(sourceCode));
