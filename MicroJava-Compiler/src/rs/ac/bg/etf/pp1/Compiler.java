@@ -16,8 +16,7 @@ import rs.ac.bg.etf.pp1.util.Log4JUtils;
 import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 
-public class MJCodeGeneratorTest {
-	
+public class Compiler {
 	static {
 		DOMConfigurator.configure(Log4JUtils.instance().findLoggerConfigFile());
 		Log4JUtils.instance().prepareLogFile(Logger.getRootLogger());
@@ -30,7 +29,7 @@ public class MJCodeGeneratorTest {
 		Reader br = null;
 
 		try {
-			File sourceCode = new File("test/programTest.mj");
+			File sourceCode = new File("test/findAny.mj");
 			log.info("Compiling source file: " + sourceCode.getAbsolutePath());
 
 			br = new BufferedReader(new FileReader(sourceCode));

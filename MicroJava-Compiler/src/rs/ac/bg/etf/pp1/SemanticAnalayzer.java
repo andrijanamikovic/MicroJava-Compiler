@@ -160,7 +160,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 			Tab.insert(Obj.Var, name, new Struct(Struct.Array, currentType));
 			isArray = false;
 			Obj obj = Tab.find(name);
-			report_info("Ovde je za niz: " + name + " tip= " + obj.getType().getKind() , lastVar);
+//			report_info("Ovde je za niz: " + name + " tip= " + obj.getType().getKind() , lastVar);
 		}
 		nVars++;
 	}
@@ -249,7 +249,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 	public void visit(ReturnExpr returnExpr) {
 		returnFound = true;
 		if (currentMethodType != returnExpr.getExpr().struct) {
-			report_error("Error on the line: " + returnExpr.getLine() + " : " + "wrong return type " + currentMethod.getName() + " a ovde je: " + returnExpr.getExpr(), null);
+			report_error("Error on the line: " + returnExpr.getLine() + " : " + "wrong return type " + currentMethod.getName(), null);
 		}
 		
 	}
@@ -298,12 +298,11 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 		// simple var
 		// or array element
 		factorVariable.struct = factorVariable.getDesignator().obj.getType();
-		report_info("Pristup factorVarible: ", factorVariable);
 		if (factorVariable.getDesignator().obj.getKind() == Obj.Var) {
 			if (factorVariable.getDesignator().obj.getKind() == Struct.Array) {
-				report_info("Pristup nizu " + factorVariable.getDesignator().obj.getName(), factorVariable);
+//				report_info("Pristup nizu " + factorVariable.getDesignator().obj.getName(), factorVariable);
 			} else {
-				report_info("Pristup promenljivoj " + factorVariable.getDesignator().obj.getName(), factorVariable);
+//				report_info("Pristup promenljivoj " + factorVariable.getDesignator().obj.getName(), factorVariable);
 			}
 		}
 	}
@@ -319,7 +318,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 			return;
 		}
 		factorNew.struct = new Struct(Struct.Array, factorNew.getType().struct); // ?
-		report_info("Ovde mi je tip: " + factorNew.getType().struct.getKind(), factorNew);
+//		report_info("Ovde mi je tip: " + factorNew.getType().struct.getKind(), factorNew);
 	}
 	
 	public void visit(Actuals actualParam) {
@@ -345,7 +344,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 			report_error("Var: " + designatorOnly.getDesignatorName() + " is not declared!" , designatorOnly);
 		}
 		if (node == null) {
-			report_error("Node is null desifnatorOnly error", designatorOnly);
+			report_error("Node is null designatorOnly error", designatorOnly);
 		}
 		designatorOnly.obj = node;
 	}
@@ -356,7 +355,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 //		Obj node = Tab.find(designatorWithExpr.getDesigatorNameExpr());
 		Obj node = designatorWithExpr.getDesignatorArray().obj;
 		if (node == null) {
-			report_error("Node je null???", designatorWithExpr);
+//			report_error("Node je null???", designatorWithExpr);
 			return;
 		}
 		if ( node.getType().getKind() != Struct.Array) {
@@ -375,7 +374,6 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 			report_error("Assignment can be done only on a Var or Elem of an array! " + designatorObject.getType().getKind(), designatorAssign);
 		}
 		
-		report_info("Levo je: " + designatorObject.getKind(), designatorAssign);
 		if (designatorObject.getType().getKind() != Struct.Array) {
 			if (designatorObject.getType() != designatorAssign.getExpr().struct) {
 				report_error("Error1: Left and right side of assign operator, are diffrent type!" + " left type = " + designatorAssign.getDesignator().obj.getType().getKind() + 
@@ -388,7 +386,7 @@ public class SemanticAnalayzer extends VisitorAdaptor {
 //						+ " right type = " + designatorAssign.getExpr().struct.getKind(), designatorAssign);
 //			}
 			if (!designatorObject.getType().assignableTo(designatorAssign.getExpr().struct)) {
-				report_error("Error3: Left and right side of assign operator, are diffrent type! ", designatorAssign);
+				report_error("Error2: Left and right side of assign operator, are diffrent type! ", designatorAssign);
 			}
 		} 
 	}

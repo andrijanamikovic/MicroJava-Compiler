@@ -48,7 +48,8 @@ program test301
 		niz2[1] = 6;
 		print(niz2[0]);	// niz[0] -> 1
 		print(niz2[1]); // niz[2] -> 6 
-		
+		bt = niz.findAny(6);
+		print(bt);
 		// [niz2[0],,,niz2[niz[nula]]] = niz; // runtime error!
 		
 		nizch = new char[3];
