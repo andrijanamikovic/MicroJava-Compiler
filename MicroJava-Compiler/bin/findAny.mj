@@ -4,11 +4,13 @@ program test301
 	void main()	
 		int niz[];
 	{
-	niz = new int[3];
+	niz = new int[5];
 	niz[0] = 1;
 	niz[1] = 2;
 	niz[2] = 6;
-	flag = niz.findAny(2);
+	niz[3] = 2;
+	niz[4] = 8;
+	flag = niz.findAny(5);
 	print(flag);
 	}
 }

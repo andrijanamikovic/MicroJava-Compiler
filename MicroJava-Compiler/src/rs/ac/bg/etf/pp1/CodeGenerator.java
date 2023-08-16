@@ -12,7 +12,8 @@ private int mainPc;
 private int adr1;
 private int adr2;
 private int adr3;
-	
+private int i;
+private Obj constValue;
 	public int getMainPc(){
 		return mainPc;
 	}
@@ -58,7 +59,7 @@ private int adr3;
 		Obj con = Tab.insert(Obj.Con, "$", cnst.struct);
 		con.setLevel(0);
 		con.setAdr(cnst.getValNum());
-		
+		constValue = con;
 		Code.load(con);
 	}
 	
@@ -66,7 +67,8 @@ private int adr3;
 		Obj con = Tab.insert(Obj.Con, "$", cnst.struct);
 		con.setLevel(0);
 		con.setAdr(cnst.getValChar());
-		
+		constValue = con;
+
 		Code.load(con);
 	}
 	
@@ -74,7 +76,8 @@ private int adr3;
 		Obj con = Tab.insert(Obj.Con, "$", cnst.struct);
 		con.setLevel(0);
 		con.setAdr(cnst.getValBool() ? 1 : 0);
-		
+		constValue = con;
+
 		Code.load(con);
 	}
 	
@@ -235,31 +238,35 @@ private int adr3;
 	}
 	
 	public void visit(FindAny findAny) {
-		//TO DO
-		int i = 0;
-//		adr1 = Code.pc - 2;
-		Code.fixup(adr1);
+		Code.loadConst(-1);
+		//pocetno
+		adr1 = Code.pc;
+		Code.loadConst(1);
+		Code.put(Code.add);
+		Code.put(Code.dup2);
+		Code.put(Code.dup);
 		Code.load(findAny.getDummyDesignator().obj); //adresa 
-		Code.load(findAny.getDummyDesignator().obj); //adresa 
+		Code.put(Code.dup_x2);
 		Code.put(Code.arraylength);
-		Code.loadConst(i);
+		adr2 = Code.pc + 1;
 		Code.putFalseJump(Code.ne, 0);
-		adr1 = Code.pc - 1;
-		Code.loadConst(i);
 		Code.put(Code.aload);
-		i = i + 1;
-		Code.putFalseJump(Code.eq, 0);
-		adr2 = Code.pc - 1;
+		Code.putFalseJump(Code.eq, adr1);
+		Code.put(Code.pop);
+		Code.put(Code.pop);
 		Code.loadConst(1); //nadjeno
 		Code.store(findAny.getDesignator().obj);
+		adr3 = Code.pc + 1;
 		Code.putJump(0);
-		adr3 = Code.pc - 1;
 		Code.fixup(adr2);
-//		adr3 = Code.pc - 2;
+		Code.put(Code.pop);
+		Code.put(Code.pop);
+		Code.put(Code.pop);
+		Code.put(Code.pop);
+		Code.put(Code.pop);
 		Code.loadConst(0); //nije
 		Code.store(findAny.getDesignator().obj);
 		Code.fixup(adr3);
-//		adr2 = Code.pc - 2;
 		return;
 	}
 }
